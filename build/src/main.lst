@@ -1,0 +1,89 @@
+GAS LISTING /tmp/ccNwWAh2.s 			page 1
+
+
+   1              		.file	"main.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	main
+   9              	main:
+  10              	.LFB0:
+  11              		.file 1 "src/main.cpp"
+   1:src/main.cpp  **** #include "../lib/console.h"
+   2:src/main.cpp  **** #include "../lib/hw.h"
+   3:src/main.cpp  **** #include "../h/memory_allocator.hpp"
+   4:src/main.cpp  **** 
+   5:src/main.cpp  **** void main(){
+  12              		.loc 1 5 12
+  13              		.cfi_startproc
+  14 0000 130101FF 		addi	sp,sp,-16
+  15              		.cfi_def_cfa_offset 16
+  16 0004 23348100 		sd	s0,8(sp)
+  17              		.cfi_offset 8, -8
+  18 0008 13040101 		addi	s0,sp,16
+  19              		.cfi_def_cfa 8, 0
+   6:src/main.cpp  ****     return;
+  20              		.loc 1 6 5
+   7:src/main.cpp  **** }
+  21              		.loc 1 7 1 is_stmt 0
+  22 000c 03348100 		ld	s0,8(sp)
+  23              		.cfi_restore 8
+  24              		.cfi_def_cfa 2, 16
+  25 0010 13010101 		addi	sp,sp,16
+  26              		.cfi_def_cfa_offset 0
+  27 0014 67800000 		jr	ra
+  28              		.cfi_endproc
+  29              	.LFE0:
+  31              	.Letext0:
+  32              		.file 2 "src/../lib/hw.h"
+GAS LISTING /tmp/ccNwWAh2.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.cpp
+     /tmp/ccNwWAh2.s:9      .text:0000000000000000 main
+     /tmp/ccNwWAh2.s:13     .text:0000000000000000 .L0 
+     /tmp/ccNwWAh2.s:14     .text:0000000000000000 .L0 
+     /tmp/ccNwWAh2.s:15     .text:0000000000000004 .L0 
+     /tmp/ccNwWAh2.s:17     .text:0000000000000008 .L0 
+     /tmp/ccNwWAh2.s:19     .text:000000000000000c .L0 
+     /tmp/ccNwWAh2.s:21     .text:000000000000000c .L0 
+     /tmp/ccNwWAh2.s:22     .text:000000000000000c .L0 
+     /tmp/ccNwWAh2.s:23     .text:0000000000000010 .L0 
+     /tmp/ccNwWAh2.s:24     .text:0000000000000010 .L0 
+     /tmp/ccNwWAh2.s:26     .text:0000000000000014 .L0 
+     /tmp/ccNwWAh2.s:28     .text:0000000000000018 .L0 
+     /tmp/ccNwWAh2.s:33     .text:0000000000000018 .L0 
+     /tmp/ccNwWAh2.s:174    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccNwWAh2.s:370    .debug_str:00000000000000bb .LASF18
+     /tmp/ccNwWAh2.s:374    .debug_str:0000000000000184 .LASF19
+     /tmp/ccNwWAh2.s:378    .debug_str:000000000000019e .LASF20
+     /tmp/ccNwWAh2.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccNwWAh2.s:31     .text:0000000000000018 .Letext0
+     /tmp/ccNwWAh2.s:342    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccNwWAh2.s:376    .debug_str:0000000000000191 .LASF0
+     /tmp/ccNwWAh2.s:366    .debug_str:000000000000009c .LASF1
+     /tmp/ccNwWAh2.s:362    .debug_str:000000000000007c .LASF2
+     /tmp/ccNwWAh2.s:352    .debug_str:0000000000000038 .LASF4
+     /tmp/ccNwWAh2.s:364    .debug_str:000000000000008a .LASF3
+     /tmp/ccNwWAh2.s:346    .debug_str:0000000000000013 .LASF5
+     /tmp/ccNwWAh2.s:344    .debug_str:0000000000000000 .LASF6
+     /tmp/ccNwWAh2.s:358    .debug_str:000000000000005a .LASF7
+     /tmp/ccNwWAh2.s:348    .debug_str:000000000000001a .LASF8
+     /tmp/ccNwWAh2.s:350    .debug_str:000000000000002a .LASF9
+     /tmp/ccNwWAh2.s:386    .debug_str:00000000000001ee .LASF10
+     /tmp/ccNwWAh2.s:360    .debug_str:000000000000006d .LASF11
+     /tmp/ccNwWAh2.s:384    .debug_str:00000000000001de .LASF12
+     /tmp/ccNwWAh2.s:382    .debug_str:00000000000001ce .LASF13
+     /tmp/ccNwWAh2.s:368    .debug_str:00000000000000af .LASF14
+     /tmp/ccNwWAh2.s:356    .debug_str:0000000000000044 .LASF15
+     /tmp/ccNwWAh2.s:380    .debug_str:00000000000001b8 .LASF16
+     /tmp/ccNwWAh2.s:354    .debug_str:000000000000003f .LASF17
+     /tmp/ccNwWAh2.s:372    .debug_str:000000000000017f .LASF21
+     /tmp/ccNwWAh2.s:10     .text:0000000000000000 .LFB0
+     /tmp/ccNwWAh2.s:29     .text:0000000000000018 .LFE0
+     /tmp/ccNwWAh2.s:34     .debug_info:0000000000000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS

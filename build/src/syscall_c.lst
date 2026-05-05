@@ -1,0 +1,108 @@
+GAS LISTING /tmp/cc1hzGGv.s 			page 1
+
+
+   1              		.file	"syscall_c.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	_Z9mem_allocm
+   9              	_Z9mem_allocm:
+  10              	.LFB0:
+  11              		.file 1 "src/syscall_c.cpp"
+   1:src/syscall_c.cpp **** #include "../h/syscall_c.hpp"
+   2:src/syscall_c.cpp **** #include "../lib/console.h"
+   3:src/syscall_c.cpp **** /**
+   4:src/syscall_c.cpp ****  * @param size Size in bytes to be allocated
+   5:src/syscall_c.cpp ****  */
+   6:src/syscall_c.cpp **** // Upis vrednosti registra sstatus u automatsku promenljivu x 
+   7:src/syscall_c.cpp **** //asm volatile("csrr %0, sstatus" : "=r" (x)); 
+   8:src/syscall_c.cpp **** // Upis vrednosti automatske promenljive x u registar sstatus 
+   9:src/syscall_c.cpp **** //asm volatile("csrw sstatus, %0" : : "r" (x)); 
+  10:src/syscall_c.cpp **** // Instrukcija koja učitava podatak iz memorije u registar s0 
+  11:src/syscall_c.cpp **** //asm volatile("ld s0, 8(sp)"); 
+  12:src/syscall_c.cpp **** void* mem_alloc(size_t size)
+  13:src/syscall_c.cpp **** {
+  12              		.loc 1 13 1
+  13              		.cfi_startproc
+  14              	.LVL0:
+  15 0000 130101FF 		addi	sp,sp,-16
+  16              		.cfi_def_cfa_offset 16
+  17 0004 23348100 		sd	s0,8(sp)
+  18              		.cfi_offset 8, -8
+  19 0008 13040101 		addi	s0,sp,16
+  20              		.cfi_def_cfa 8, 0
+  14:src/syscall_c.cpp ****     return nullptr;
+  21              		.loc 1 14 5
+  15:src/syscall_c.cpp **** 
+  16:src/syscall_c.cpp **** }...
+  22              		.loc 1 16 1 is_stmt 0
+  23 000c 13050000 		li	a0,0
+  24              	.LVL1:
+  25 0010 03348100 		ld	s0,8(sp)
+  26              		.cfi_restore 8
+  27              		.cfi_def_cfa 2, 16
+  28 0014 13010101 		addi	sp,sp,16
+  29              		.cfi_def_cfa_offset 0
+  30 0018 67800000 		jr	ra
+  31              		.cfi_endproc
+  32              	.LFE0:
+  34              	.Letext0:
+  35              		.file 2 "src/../h/../lib/hw.h"
+  36              		.file 3 "src/../h/syscall_c.hpp"
+GAS LISTING /tmp/cc1hzGGv.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 syscall_c.cpp
+     /tmp/cc1hzGGv.s:9      .text:0000000000000000 _Z9mem_allocm
+     /tmp/cc1hzGGv.s:13     .text:0000000000000000 .L0 
+     /tmp/cc1hzGGv.s:15     .text:0000000000000000 .L0 
+     /tmp/cc1hzGGv.s:16     .text:0000000000000004 .L0 
+     /tmp/cc1hzGGv.s:18     .text:0000000000000008 .L0 
+     /tmp/cc1hzGGv.s:20     .text:000000000000000c .L0 
+     /tmp/cc1hzGGv.s:22     .text:000000000000000c .L0 
+     /tmp/cc1hzGGv.s:23     .text:000000000000000c .L0 
+     /tmp/cc1hzGGv.s:26     .text:0000000000000014 .L0 
+     /tmp/cc1hzGGv.s:27     .text:0000000000000014 .L0 
+     /tmp/cc1hzGGv.s:29     .text:0000000000000018 .L0 
+     /tmp/cc1hzGGv.s:31     .text:000000000000001c .L0 
+     /tmp/cc1hzGGv.s:37     .text:000000000000001c .L0 
+     /tmp/cc1hzGGv.s:199    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/cc1hzGGv.s:461    .debug_str:0000000000000126 .LASF19
+     /tmp/cc1hzGGv.s:451    .debug_str:00000000000000ca .LASF20
+     /tmp/cc1hzGGv.s:427    .debug_str:000000000000001b .LASF21
+     /tmp/cc1hzGGv.s:5      .text:0000000000000000 .Ltext0
+     /tmp/cc1hzGGv.s:34     .text:000000000000001c .Letext0
+     /tmp/cc1hzGGv.s:421    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/cc1hzGGv.s:425    .debug_str:000000000000000e .LASF0
+     /tmp/cc1hzGGv.s:459    .debug_str:0000000000000113 .LASF1
+     /tmp/cc1hzGGv.s:447    .debug_str:00000000000000a6 .LASF2
+     /tmp/cc1hzGGv.s:441    .debug_str:000000000000008e .LASF4
+     /tmp/cc1hzGGv.s:437    .debug_str:0000000000000069 .LASF3
+     /tmp/cc1hzGGv.s:433    .debug_str:0000000000000052 .LASF5
+     /tmp/cc1hzGGv.s:439    .debug_str:000000000000007b .LASF6
+     /tmp/cc1hzGGv.s:457    .debug_str:0000000000000100 .LASF7
+     /tmp/cc1hzGGv.s:467    .debug_str:0000000000000206 .LASF8
+     /tmp/cc1hzGGv.s:429    .debug_str:0000000000000035 .LASF9
+     /tmp/cc1hzGGv.s:431    .debug_str:0000000000000043 .LASF10
+     /tmp/cc1hzGGv.s:463    .debug_str:00000000000001ea .LASF11
+     /tmp/cc1hzGGv.s:435    .debug_str:0000000000000059 .LASF12
+     /tmp/cc1hzGGv.s:471    .debug_str:0000000000000220 .LASF13
+     /tmp/cc1hzGGv.s:445    .debug_str:000000000000009a .LASF14
+     /tmp/cc1hzGGv.s:453    .debug_str:00000000000000dc .LASF15
+     /tmp/cc1hzGGv.s:449    .debug_str:00000000000000b4 .LASF16
+     /tmp/cc1hzGGv.s:423    .debug_str:0000000000000000 .LASF17
+     /tmp/cc1hzGGv.s:465    .debug_str:00000000000001f9 .LASF18
+     /tmp/cc1hzGGv.s:469    .debug_str:0000000000000216 .LASF22
+     /tmp/cc1hzGGv.s:455    .debug_str:00000000000000f2 .LASF23
+     /tmp/cc1hzGGv.s:10     .text:0000000000000000 .LFB0
+     /tmp/cc1hzGGv.s:32     .text:000000000000001c .LFE0
+     /tmp/cc1hzGGv.s:443    .debug_str:0000000000000095 .LASF24
+     /tmp/cc1hzGGv.s:394    .debug_loc:0000000000000000 .LLST0
+     /tmp/cc1hzGGv.s:14     .text:0000000000000000 .LVL0
+     /tmp/cc1hzGGv.s:24     .text:0000000000000010 .LVL1
+     /tmp/cc1hzGGv.s:38     .debug_info:0000000000000000 .Ldebug_info0
+
+NO UNDEFINED SYMBOLS
