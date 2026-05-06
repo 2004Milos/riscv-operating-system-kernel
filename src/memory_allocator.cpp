@@ -1,4 +1,7 @@
 #include "../h/memory_allocator.hpp"
+#include "../lib/console.h"
+
+
 
 MemoryAllocator& MemoryAllocator::instance() {
     static MemoryAllocator inst;
@@ -25,8 +28,10 @@ void MemoryAllocator::kmem_init(){
 void* MemoryAllocator::kmem_alloc(size_t size) {
     if (size == 0) return nullptr;
 
-    // alignment to full block
+    // aligned size in bytes
     size_t aligned = size * MEM_BLOCK_SIZE;
+
+    __putc('r');
 
     if (!head) kmem_init();
     
@@ -44,7 +49,7 @@ void* MemoryAllocator::kmem_alloc(size_t size) {
             else if (curr->size > aligned + sizeof(ChunkHeader)){
                 // Split free chunk in case its larger and large enaugh for making additional chunk inside
                 size_t remaining = curr->size - aligned;
-
+                
                 ChunkHeader* newChunk = (ChunkHeader*)((char*)curr + sizeof(ChunkHeader) + aligned);
                 newChunk->free = true;
                 newChunk->size = remaining - sizeof(ChunkHeader);

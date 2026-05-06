@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccf1baJl.s 			page 1
+GAS LISTING /tmp/ccZEVeTJ.s 			page 1
 
 
    1              		.file	"kernel.cpp"
@@ -6,35 +6,595 @@ GAS LISTING /tmp/ccf1baJl.s 			page 1
    3              		.option norelax
    4              		.text
    5              	.Ltext0:
-   6              	.Letext0:
-   7              		.file 1 "src/../h/../lib/hw.h"
-GAS LISTING /tmp/ccf1baJl.s 			page 2
+   6              		.align	2
+   7              		.globl	_ZN6Kernel4initEv
+   9              	_ZN6Kernel4initEv:
+  10              	.LFB0:
+  11              		.file 1 "src/kernel.cpp"
+   1:src/kernel.cpp **** #include "../h/kernel.hpp"
+   2:src/kernel.cpp **** #include "../h/riscv.hpp"
+   3:src/kernel.cpp **** #include "../h/memory_allocator.hpp"
+   4:src/kernel.cpp **** #include "../lib/console.h"
+   5:src/kernel.cpp **** 
+   6:src/kernel.cpp **** 
+   7:src/kernel.cpp **** void Kernel::init() {
+  12              		.loc 1 7 21
+  13              		.cfi_startproc
+  14 0000 130101FF 		addi	sp,sp,-16
+  15              		.cfi_def_cfa_offset 16
+  16 0004 23341100 		sd	ra,8(sp)
+  17 0008 23308100 		sd	s0,0(sp)
+  18              		.cfi_offset 1, -8
+  19              		.cfi_offset 8, -16
+  20 000c 13040101 		addi	s0,sp,16
+  21              		.cfi_def_cfa 8, 0
+   8:src/kernel.cpp ****     // set trap routine
+   9:src/kernel.cpp ****     Riscv::w_stvec((uint64)&supervisorTrap);
+  22              		.loc 1 9 5
+  23              		.loc 1 9 19 is_stmt 0
+  24 0010 17050000 		la	a0,_ZN6Kernel14supervisorTrapEv
+  24      03350500 
+  25 0018 97000000 		call	_ZN5Riscv7w_stvecEm@plt
+  25      E7800000 
+  26              	.LVL0:
+  10:src/kernel.cpp ****     Riscv::ms_sstatus(Riscv::SstatusBits::SSTATUS_SIE);
+  27              		.loc 1 10 5 is_stmt 1
+  28              		.loc 1 10 22 is_stmt 0
+  29 0020 13052000 		li	a0,2
+  30 0024 97000000 		call	_ZN5Riscv10ms_sstatusEm@plt
+  30      E7800000 
+  31              	.LVL1:
+  11:src/kernel.cpp **** }
+  32              		.loc 1 11 1
+  33 002c 83308100 		ld	ra,8(sp)
+  34              		.cfi_restore 1
+  35 0030 03340100 		ld	s0,0(sp)
+  36              		.cfi_restore 8
+  37              		.cfi_def_cfa 2, 16
+  38 0034 13010101 		addi	sp,sp,16
+  39              		.cfi_def_cfa_offset 0
+  40 0038 67800000 		jr	ra
+  41              		.cfi_endproc
+  42              	.LFE0:
+  44              		.align	2
+  45              		.globl	_ZN6Kernel21supervisorTrapHandlerEv
+GAS LISTING /tmp/ccZEVeTJ.s 			page 2
+
+
+  47              	_ZN6Kernel21supervisorTrapHandlerEv:
+  48              	.LFB1:
+  12:src/kernel.cpp **** 
+  13:src/kernel.cpp **** 
+  14:src/kernel.cpp **** void Kernel::supervisorTrapHandler()
+  15:src/kernel.cpp **** {
+  49              		.loc 1 15 1 is_stmt 1
+  50              		.cfi_startproc
+  51 003c 130101FC 		addi	sp,sp,-64
+  52              		.cfi_def_cfa_offset 64
+  53 0040 233C1102 		sd	ra,56(sp)
+  54 0044 23388102 		sd	s0,48(sp)
+  55 0048 23349102 		sd	s1,40(sp)
+  56              		.cfi_offset 1, -8
+  57              		.cfi_offset 8, -16
+  58              		.cfi_offset 9, -24
+  59 004c 13040104 		addi	s0,sp,64
+  60              		.cfi_def_cfa 8, 0
+  16:src/kernel.cpp ****     uint32 scause = Riscv::r_scause();
+  61              		.loc 1 16 5
+  62              		.loc 1 16 36 is_stmt 0
+  63 0050 97000000 		call	_ZN5Riscv8r_scauseEv@plt
+  63      E7800000 
+  64              	.LVL2:
+  17:src/kernel.cpp **** 
+  18:src/kernel.cpp ****     if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)
+  65              		.loc 1 18 5 is_stmt 1
+  66              	.LBB2:
+  67              		.loc 1 18 40 is_stmt 0
+  68 0058 1B0585FF 		addiw	a0,a0,-8
+  69              	.LVL3:
+  70              		.loc 1 18 5
+  71 005c 93071000 		li	a5,1
+  72 0060 63FCA700 		bleu	a0,a5,.L9
+  73              	.L3:
+  74              	.LBE2:
+  19:src/kernel.cpp ****     {
+  20:src/kernel.cpp ****         // Not external interupt
+  21:src/kernel.cpp ****         // ecall from user or supervisor mode
+  22:src/kernel.cpp **** 
+  23:src/kernel.cpp ****         uint64 volatile sepc = Riscv::r_sepc() + 4;
+  24:src/kernel.cpp ****         uint64 volatile sstatus =  Riscv::r_sstatus();
+  25:src/kernel.cpp ****         uint64 volatile opcode = Riscv::r_a0();
+  26:src/kernel.cpp ****         int value;
+  27:src/kernel.cpp ****         void* pointer;
+  28:src/kernel.cpp ****         
+  29:src/kernel.cpp ****         switch (opcode) {
+  30:src/kernel.cpp ****             case 0x01: //mem_alloc
+  31:src/kernel.cpp ****                 size_t size;
+  32:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (size));
+  33:src/kernel.cpp **** 
+  34:src/kernel.cpp ****                 pointer = MemoryAllocator::instance().kmem_alloc(size);
+  35:src/kernel.cpp **** 
+  36:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(pointer));
+  37:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+  38:src/kernel.cpp ****                 break;
+  39:src/kernel.cpp **** 
+GAS LISTING /tmp/ccZEVeTJ.s 			page 3
+
+
+  40:src/kernel.cpp ****             case 0x02: //mem_free
+  41:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (pointer));
+  42:src/kernel.cpp **** 
+  43:src/kernel.cpp ****                 value = MemoryAllocator::instance().kmem_free(pointer);
+  44:src/kernel.cpp **** 
+  45:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(value));
+  46:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+  47:src/kernel.cpp ****                 break;
+  48:src/kernel.cpp ****             default:
+  49:src/kernel.cpp ****                 break;
+  50:src/kernel.cpp ****         }
+  51:src/kernel.cpp **** 
+  52:src/kernel.cpp ****         Riscv::w_sstatus(sstatus);
+  53:src/kernel.cpp ****         Riscv::w_sepc(sepc);
+  54:src/kernel.cpp ****     }
+  55:src/kernel.cpp ****     
+  56:src/kernel.cpp ****     return;
+  57:src/kernel.cpp **** }...
+  75              		.loc 1 57 1
+  76 0064 83308103 		ld	ra,56(sp)
+  77              		.cfi_remember_state
+  78              		.cfi_restore 1
+  79 0068 03340103 		ld	s0,48(sp)
+  80              		.cfi_restore 8
+  81              		.cfi_def_cfa 2, 64
+  82 006c 83348102 		ld	s1,40(sp)
+  83              		.cfi_restore 9
+  84 0070 13010104 		addi	sp,sp,64
+  85              		.cfi_def_cfa_offset 0
+  86 0074 67800000 		jr	ra
+  87              	.L9:
+  88              		.cfi_restore_state
+  89              	.LBB8:
+  90              	.LBB3:
+  23:src/kernel.cpp ****         uint64 volatile sepc = Riscv::r_sepc() + 4;
+  91              		.loc 1 23 9 is_stmt 1
+  23:src/kernel.cpp ****         uint64 volatile sepc = Riscv::r_sepc() + 4;
+  92              		.loc 1 23 45 is_stmt 0
+  93 0078 97000000 		call	_ZN5Riscv6r_sepcEv@plt
+  93      E7800000 
+  94              	.LVL4:
+  23:src/kernel.cpp ****         uint64 volatile sepc = Riscv::r_sepc() + 4;
+  95              		.loc 1 23 48
+  96 0080 13054500 		addi	a0,a0,4
+  23:src/kernel.cpp ****         uint64 volatile sepc = Riscv::r_sepc() + 4;
+  97              		.loc 1 23 50
+  98 0084 2334A4FC 		sd	a0,-56(s0)
+  24:src/kernel.cpp ****         uint64 volatile sstatus =  Riscv::r_sstatus();
+  99              		.loc 1 24 9 is_stmt 1
+  24:src/kernel.cpp ****         uint64 volatile sstatus =  Riscv::r_sstatus();
+ 100              		.loc 1 24 52 is_stmt 0
+ 101 0088 97000000 		call	_ZN5Riscv9r_sstatusEv@plt
+ 101      E7800000 
+ 102              	.LVL5:
+  24:src/kernel.cpp ****         uint64 volatile sstatus =  Riscv::r_sstatus();
+ 103              		.loc 1 24 53
+ 104 0090 2338A4FC 		sd	a0,-48(s0)
+GAS LISTING /tmp/ccZEVeTJ.s 			page 4
+
+
+  25:src/kernel.cpp ****         uint64 volatile opcode = Riscv::r_a0();
+ 105              		.loc 1 25 9 is_stmt 1
+  25:src/kernel.cpp ****         uint64 volatile opcode = Riscv::r_a0();
+ 106              		.loc 1 25 45 is_stmt 0
+ 107 0094 97000000 		call	_ZN5Riscv4r_a0Ev@plt
+ 107      E7800000 
+ 108              	.LVL6:
+  25:src/kernel.cpp ****         uint64 volatile opcode = Riscv::r_a0();
+ 109              		.loc 1 25 46
+ 110 009c 233CA4FC 		sd	a0,-40(s0)
+  26:src/kernel.cpp ****         int value;
+ 111              		.loc 1 26 9 is_stmt 1
+  27:src/kernel.cpp ****         void* pointer;
+ 112              		.loc 1 27 9
+  29:src/kernel.cpp ****         switch (opcode) {
+ 113              		.loc 1 29 9
+ 114              	.LBB4:
+  29:src/kernel.cpp ****         switch (opcode) {
+ 115              		.loc 1 29 17 is_stmt 0
+ 116 00a0 833784FD 		ld	a5,-40(s0)
+  29:src/kernel.cpp ****         switch (opcode) {
+ 117              		.loc 1 29 9
+ 118 00a4 13071000 		li	a4,1
+ 119 00a8 6384E702 		beq	a5,a4,.L5
+ 120 00ac 13072000 		li	a4,2
+ 121 00b0 6382E704 		beq	a5,a4,.L6
+ 122              	.L7:
+ 123              	.LBE4:
+  52:src/kernel.cpp ****         Riscv::w_sstatus(sstatus);
+ 124              		.loc 1 52 9 is_stmt 1
+  52:src/kernel.cpp ****         Riscv::w_sstatus(sstatus);
+ 125              		.loc 1 52 25 is_stmt 0
+ 126 00b4 033504FD 		ld	a0,-48(s0)
+ 127 00b8 97000000 		call	_ZN5Riscv9w_sstatusEm@plt
+ 127      E7800000 
+ 128              	.LVL7:
+  53:src/kernel.cpp ****         Riscv::w_sepc(sepc);
+ 129              		.loc 1 53 9 is_stmt 1
+  53:src/kernel.cpp ****         Riscv::w_sepc(sepc);
+ 130              		.loc 1 53 22 is_stmt 0
+ 131 00c0 033584FC 		ld	a0,-56(s0)
+ 132 00c4 97000000 		call	_ZN5Riscv6w_sepcEm@plt
+ 132      E7800000 
+ 133              	.LVL8:
+ 134              	.LBE3:
+ 135              	.LBE8:
+  56:src/kernel.cpp ****     return;
+ 136              		.loc 1 56 5 is_stmt 1
+ 137 00cc 6FF09FF9 		j	.L3
+ 138              	.L5:
+ 139              	.LBB9:
+ 140              	.LBB7:
+ 141              	.LBB6:
+ 142              	.LBB5:
+  30:src/kernel.cpp ****             case 0x01: //mem_alloc
+ 143              		.loc 1 30 13
+  31:src/kernel.cpp ****                 size_t size;
+GAS LISTING /tmp/ccZEVeTJ.s 			page 5
+
+
+ 144              		.loc 1 31 17
+  32:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (size));
+ 145              		.loc 1 32 17
+  32:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (size));
+ 146              		.loc 1 32 60 is_stmt 0
+ 147              	#APP
+ 148              	# 32 "src/kernel.cpp" 1
+ 149              		mv s1, a1
+ 150              	# 0 "" 2
+ 151              	.LVL9:
+  34:src/kernel.cpp ****                 pointer = MemoryAllocator::instance().kmem_alloc(size);
+ 152              		.loc 1 34 17 is_stmt 1
+  34:src/kernel.cpp ****                 pointer = MemoryAllocator::instance().kmem_alloc(size);
+ 153              		.loc 1 34 53 is_stmt 0
+ 154              	#NO_APP
+ 155 00d4 97000000 		call	_ZN15MemoryAllocator8instanceEv@plt
+ 155      E7800000 
+ 156              	.LVL10:
+  34:src/kernel.cpp ****                 pointer = MemoryAllocator::instance().kmem_alloc(size);
+ 157              		.loc 1 34 65
+ 158 00dc 93850400 		mv	a1,s1
+ 159 00e0 97000000 		call	_ZN15MemoryAllocator10kmem_allocEm@plt
+ 159      E7800000 
+ 160              	.LVL11:
+  36:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(pointer));
+ 161              		.loc 1 36 17 is_stmt 1
+  36:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(pointer));
+ 162              		.loc 1 36 63 is_stmt 0
+ 163              	#APP
+ 164              	# 36 "src/kernel.cpp" 1
+  37:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+ 165              		mv t0, a0
+ 166              	# 0 "" 2
+ 167              		.loc 1 37 17 is_stmt 1
+  37:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+ 168              		.loc 1 37 51 is_stmt 0
+ 169              	# 37 "src/kernel.cpp" 1
+  38:src/kernel.cpp ****                 break;
+ 170              		sd t0, 80(x8)
+ 171              	# 0 "" 2
+ 172              		.loc 1 38 17 is_stmt 1
+ 173              	#NO_APP
+ 174 00f0 6FF05FFC 		j	.L7
+ 175              	.LVL12:
+ 176              	.L6:
+  40:src/kernel.cpp ****             case 0x02: //mem_free
+ 177              		.loc 1 40 13
+  41:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (pointer));
+ 178              		.loc 1 41 17
+  41:src/kernel.cpp ****                 __asm__ volatile("mv %0, a1" : "=r" (pointer));
+ 179              		.loc 1 41 63 is_stmt 0
+ 180              	#APP
+ 181              	# 41 "src/kernel.cpp" 1
+ 182              		mv s1, a1
+ 183              	# 0 "" 2
+ 184              	.LVL13:
+  43:src/kernel.cpp ****                 value = MemoryAllocator::instance().kmem_free(pointer);
+GAS LISTING /tmp/ccZEVeTJ.s 			page 6
+
+
+ 185              		.loc 1 43 17 is_stmt 1
+  43:src/kernel.cpp ****                 value = MemoryAllocator::instance().kmem_free(pointer);
+ 186              		.loc 1 43 51 is_stmt 0
+ 187              	#NO_APP
+ 188 00f8 97000000 		call	_ZN15MemoryAllocator8instanceEv@plt
+ 188      E7800000 
+ 189              	.LVL14:
+  43:src/kernel.cpp ****                 value = MemoryAllocator::instance().kmem_free(pointer);
+ 190              		.loc 1 43 62
+ 191 0100 93850400 		mv	a1,s1
+ 192 0104 97000000 		call	_ZN15MemoryAllocator9kmem_freeEPv@plt
+ 192      E7800000 
+ 193              	.LVL15:
+  45:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(value));
+ 194              		.loc 1 45 17 is_stmt 1
+  45:src/kernel.cpp ****                 __asm__ volatile("mv t0, %0" : : "r"(value));
+ 195              		.loc 1 45 61 is_stmt 0
+ 196              	#APP
+ 197              	# 45 "src/kernel.cpp" 1
+  46:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+ 198              		mv t0, a0
+ 199              	# 0 "" 2
+ 200              		.loc 1 46 17 is_stmt 1
+  46:src/kernel.cpp ****                 __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to re
+ 201              		.loc 1 46 51 is_stmt 0
+ 202              	# 46 "src/kernel.cpp" 1
+  47:src/kernel.cpp ****                 break;
+ 203              		sd t0, 80(x8)
+ 204              	# 0 "" 2
+ 205              		.loc 1 47 17 is_stmt 1
+ 206              	#NO_APP
+ 207 0114 6FF01FFA 		j	.L7
+ 208              	.LBE5:
+ 209              	.LBE6:
+ 210              	.LBE7:
+ 211              	.LBE9:
+ 212              		.cfi_endproc
+ 213              	.LFE1:
+ 215              	.Letext0:
+ 216              		.file 2 "src/../h/../lib/hw.h"
+ 217              		.file 3 "src/../h/kernel.hpp"
+ 218              		.file 4 "src/../h/riscv.hpp"
+ 219              		.file 5 "src/../h/memory_allocator.hpp"
+GAS LISTING /tmp/ccZEVeTJ.s 			page 7
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 kernel.cpp
-     /tmp/ccf1baJl.s:130    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/ccf1baJl.s:292    .debug_str:0000000000000102 .LASF17
-     /tmp/ccf1baJl.s:286    .debug_str:00000000000000cd .LASF18
-     /tmp/ccf1baJl.s:262    .debug_str:000000000000000d .LASF19
-     /tmp/ccf1baJl.s:258    .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/ccf1baJl.s:260    .debug_str:0000000000000000 .LASF0
-     /tmp/ccf1baJl.s:290    .debug_str:00000000000000ef .LASF1
-     /tmp/ccf1baJl.s:280    .debug_str:0000000000000093 .LASF2
-     /tmp/ccf1baJl.s:276    .debug_str:0000000000000080 .LASF4
-     /tmp/ccf1baJl.s:272    .debug_str:000000000000005b .LASF3
-     /tmp/ccf1baJl.s:268    .debug_str:0000000000000044 .LASF5
-     /tmp/ccf1baJl.s:274    .debug_str:000000000000006d .LASF6
-     /tmp/ccf1baJl.s:288    .debug_str:00000000000000dc .LASF7
-     /tmp/ccf1baJl.s:296    .debug_str:00000000000001d5 .LASF8
-     /tmp/ccf1baJl.s:264    .debug_str:0000000000000027 .LASF9
-     /tmp/ccf1baJl.s:266    .debug_str:0000000000000035 .LASF10
-     /tmp/ccf1baJl.s:294    .debug_str:00000000000001c6 .LASF11
-     /tmp/ccf1baJl.s:270    .debug_str:000000000000004b .LASF12
-     /tmp/ccf1baJl.s:298    .debug_str:00000000000001e5 .LASF13
-     /tmp/ccf1baJl.s:278    .debug_str:0000000000000087 .LASF14
-     /tmp/ccf1baJl.s:284    .debug_str:00000000000000b7 .LASF15
-     /tmp/ccf1baJl.s:282    .debug_str:00000000000000a1 .LASF16
-     /tmp/ccf1baJl.s:9      .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccZEVeTJ.s:9      .text:0000000000000000 _ZN6Kernel4initEv
+     /tmp/ccZEVeTJ.s:13     .text:0000000000000000 .L0 
+     /tmp/ccZEVeTJ.s:14     .text:0000000000000000 .L0 
+     /tmp/ccZEVeTJ.s:15     .text:0000000000000004 .L0 
+     /tmp/ccZEVeTJ.s:18     .text:000000000000000c .L0 
+     /tmp/ccZEVeTJ.s:19     .text:000000000000000c .L0 
+     /tmp/ccZEVeTJ.s:21     .text:0000000000000010 .L0 
+     /tmp/ccZEVeTJ.s:23     .text:0000000000000010 .L0 
+     /tmp/ccZEVeTJ.s:24     .text:0000000000000010 .L0 
+     /tmp/ccZEVeTJ.s:28     .text:0000000000000020 .L0 
+     /tmp/ccZEVeTJ.s:29     .text:0000000000000020 .L0 
+     /tmp/ccZEVeTJ.s:33     .text:000000000000002c .L0 
+     /tmp/ccZEVeTJ.s:34     .text:0000000000000030 .L0 
+     /tmp/ccZEVeTJ.s:36     .text:0000000000000034 .L0 
+     /tmp/ccZEVeTJ.s:37     .text:0000000000000034 .L0 
+     /tmp/ccZEVeTJ.s:39     .text:0000000000000038 .L0 
+     /tmp/ccZEVeTJ.s:41     .text:000000000000003c .L0 
+     /tmp/ccZEVeTJ.s:47     .text:000000000000003c _ZN6Kernel21supervisorTrapHandlerEv
+     /tmp/ccZEVeTJ.s:50     .text:000000000000003c .L0 
+     /tmp/ccZEVeTJ.s:51     .text:000000000000003c .L0 
+     /tmp/ccZEVeTJ.s:52     .text:0000000000000040 .L0 
+     /tmp/ccZEVeTJ.s:56     .text:000000000000004c .L0 
+     /tmp/ccZEVeTJ.s:57     .text:000000000000004c .L0 
+     /tmp/ccZEVeTJ.s:58     .text:000000000000004c .L0 
+     /tmp/ccZEVeTJ.s:60     .text:0000000000000050 .L0 
+     /tmp/ccZEVeTJ.s:62     .text:0000000000000050 .L0 
+     /tmp/ccZEVeTJ.s:63     .text:0000000000000050 .L0 
+     /tmp/ccZEVeTJ.s:67     .text:0000000000000058 .L0 
+     /tmp/ccZEVeTJ.s:68     .text:0000000000000058 .L0 
+     /tmp/ccZEVeTJ.s:71     .text:000000000000005c .L0 
+     /tmp/ccZEVeTJ.s:76     .text:0000000000000064 .L0 
+     /tmp/ccZEVeTJ.s:77     .text:0000000000000068 .L0 
+     /tmp/ccZEVeTJ.s:78     .text:0000000000000068 .L0 
+     /tmp/ccZEVeTJ.s:80     .text:000000000000006c .L0 
+     /tmp/ccZEVeTJ.s:81     .text:000000000000006c .L0 
+     /tmp/ccZEVeTJ.s:83     .text:0000000000000070 .L0 
+     /tmp/ccZEVeTJ.s:85     .text:0000000000000074 .L0 
+     /tmp/ccZEVeTJ.s:88     .text:0000000000000078 .L0 
+     /tmp/ccZEVeTJ.s:92     .text:0000000000000078 .L0 
+     /tmp/ccZEVeTJ.s:93     .text:0000000000000078 .L0 
+     /tmp/ccZEVeTJ.s:96     .text:0000000000000080 .L0 
+     /tmp/ccZEVeTJ.s:98     .text:0000000000000084 .L0 
+     /tmp/ccZEVeTJ.s:100    .text:0000000000000088 .L0 
+     /tmp/ccZEVeTJ.s:101    .text:0000000000000088 .L0 
+     /tmp/ccZEVeTJ.s:104    .text:0000000000000090 .L0 
+     /tmp/ccZEVeTJ.s:106    .text:0000000000000094 .L0 
+     /tmp/ccZEVeTJ.s:107    .text:0000000000000094 .L0 
+     /tmp/ccZEVeTJ.s:110    .text:000000000000009c .L0 
+     /tmp/ccZEVeTJ.s:112    .text:00000000000000a0 .L0 
+     /tmp/ccZEVeTJ.s:113    .text:00000000000000a0 .L0 
+     /tmp/ccZEVeTJ.s:115    .text:00000000000000a0 .L0 
+     /tmp/ccZEVeTJ.s:116    .text:00000000000000a0 .L0 
+     /tmp/ccZEVeTJ.s:118    .text:00000000000000a4 .L0 
+     /tmp/ccZEVeTJ.s:125    .text:00000000000000b4 .L0 
+     /tmp/ccZEVeTJ.s:126    .text:00000000000000b4 .L0 
+GAS LISTING /tmp/ccZEVeTJ.s 			page 8
 
-NO UNDEFINED SYMBOLS
+
+     /tmp/ccZEVeTJ.s:130    .text:00000000000000c0 .L0 
+     /tmp/ccZEVeTJ.s:131    .text:00000000000000c0 .L0 
+     /tmp/ccZEVeTJ.s:137    .text:00000000000000cc .L0 
+     /tmp/ccZEVeTJ.s:144    .text:00000000000000d0 .L0 
+     /tmp/ccZEVeTJ.s:145    .text:00000000000000d0 .L0 
+     /tmp/ccZEVeTJ.s:146    .text:00000000000000d0 .L0 
+      src/kernel.cpp:32     .text:00000000000000d0 .L0 
+     /tmp/ccZEVeTJ.s:153    .text:00000000000000d4 .L0 
+     /tmp/ccZEVeTJ.s:155    .text:00000000000000d4 .L0 
+     /tmp/ccZEVeTJ.s:158    .text:00000000000000dc .L0 
+     /tmp/ccZEVeTJ.s:162    .text:00000000000000e8 .L0 
+      src/kernel.cpp:36     .text:00000000000000e8 .L0 
+     /tmp/ccZEVeTJ.s:168    .text:00000000000000ec .L0 
+      src/kernel.cpp:37     .text:00000000000000ec .L0 
+     /tmp/ccZEVeTJ.s:174    .text:00000000000000f0 .L0 
+     /tmp/ccZEVeTJ.s:178    .text:00000000000000f4 .L0 
+     /tmp/ccZEVeTJ.s:179    .text:00000000000000f4 .L0 
+      src/kernel.cpp:41     .text:00000000000000f4 .L0 
+     /tmp/ccZEVeTJ.s:186    .text:00000000000000f8 .L0 
+     /tmp/ccZEVeTJ.s:188    .text:00000000000000f8 .L0 
+     /tmp/ccZEVeTJ.s:191    .text:0000000000000100 .L0 
+     /tmp/ccZEVeTJ.s:195    .text:000000000000010c .L0 
+      src/kernel.cpp:45     .text:000000000000010c .L0 
+     /tmp/ccZEVeTJ.s:201    .text:0000000000000110 .L0 
+      src/kernel.cpp:46     .text:0000000000000110 .L0 
+     /tmp/ccZEVeTJ.s:207    .text:0000000000000114 .L0 
+     /tmp/ccZEVeTJ.s:212    .text:0000000000000118 .L0 
+     /tmp/ccZEVeTJ.s:220    .text:0000000000000118 .L0 
+     /tmp/ccZEVeTJ.s:24     .text:0000000000000010 .L0 
+     /tmp/ccZEVeTJ.s:87     .text:0000000000000078 .L9
+     /tmp/ccZEVeTJ.s:138    .text:00000000000000d0 .L5
+     /tmp/ccZEVeTJ.s:176    .text:00000000000000f4 .L6
+     /tmp/ccZEVeTJ.s:73     .text:0000000000000064 .L3
+     /tmp/ccZEVeTJ.s:122    .text:00000000000000b4 .L7
+     /tmp/ccZEVeTJ.s:918    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccZEVeTJ.s:1625   .debug_str:00000000000000dd .LASF93
+     /tmp/ccZEVeTJ.s:1617   .debug_str:000000000000008e .LASF94
+     /tmp/ccZEVeTJ.s:1691   .debug_str:0000000000000375 .LASF95
+     /tmp/ccZEVeTJ.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccZEVeTJ.s:215    .text:0000000000000118 .Letext0
+     /tmp/ccZEVeTJ.s:1601   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccZEVeTJ.s:1717   .debug_str:000000000000046f .LASF0
+     /tmp/ccZEVeTJ.s:1727   .debug_str:0000000000000497 .LASF1
+     /tmp/ccZEVeTJ.s:1707   .debug_str:0000000000000435 .LASF2
+     /tmp/ccZEVeTJ.s:1747   .debug_str:0000000000000514 .LASF3
+     /tmp/ccZEVeTJ.s:1685   .debug_str:0000000000000357 .LASF4
+     /tmp/ccZEVeTJ.s:1751   .debug_str:0000000000000533 .LASF5
+     /tmp/ccZEVeTJ.s:1627   .debug_str:00000000000001a1 .LASF6
+     /tmp/ccZEVeTJ.s:1729   .debug_str:00000000000004aa .LASF7
+     /tmp/ccZEVeTJ.s:1715   .debug_str:000000000000045c .LASF8
+     /tmp/ccZEVeTJ.s:1779   .debug_str:0000000000000606 .LASF9
+     /tmp/ccZEVeTJ.s:1675   .debug_str:0000000000000301 .LASF10
+     /tmp/ccZEVeTJ.s:1733   .debug_str:00000000000004c2 .LASF11
+     /tmp/ccZEVeTJ.s:1771   .debug_str:00000000000005dd .LASF12
+     /tmp/ccZEVeTJ.s:1631   .debug_str:00000000000001b4 .LASF13
+     /tmp/ccZEVeTJ.s:1609   .debug_str:000000000000004c .LASF14
+     /tmp/ccZEVeTJ.s:1639   .debug_str:00000000000001f3 .LASF15
+GAS LISTING /tmp/ccZEVeTJ.s 			page 9
+
+
+     /tmp/ccZEVeTJ.s:1745   .debug_str:00000000000004fe .LASF16
+     /tmp/ccZEVeTJ.s:1647   .debug_str:0000000000000248 .LASF17
+     /tmp/ccZEVeTJ.s:1785   .debug_str:0000000000000626 .LASF22
+     /tmp/ccZEVeTJ.s:1731   .debug_str:00000000000004bd .LASF59
+     /tmp/ccZEVeTJ.s:1619   .debug_str:000000000000009d .LASF61
+     /tmp/ccZEVeTJ.s:1799   .debug_str:0000000000000686 .LASF18
+     /tmp/ccZEVeTJ.s:1697   .debug_str:00000000000003d6 .LASF20
+     /tmp/ccZEVeTJ.s:1757   .debug_str:0000000000000557 .LASF19
+     /tmp/ccZEVeTJ.s:1623   .debug_str:00000000000000c0 .LASF21
+     /tmp/ccZEVeTJ.s:1725   .debug_str:0000000000000491 .LASF23
+     /tmp/ccZEVeTJ.s:1641   .debug_str:00000000000001ff .LASF96
+     /tmp/ccZEVeTJ.s:1645   .debug_str:000000000000023c .LASF24
+     /tmp/ccZEVeTJ.s:1695   .debug_str:00000000000003c9 .LASF25
+     /tmp/ccZEVeTJ.s:1629   .debug_str:00000000000001a8 .LASF26
+     /tmp/ccZEVeTJ.s:1611   .debug_str:000000000000005c .LASF27
+     /tmp/ccZEVeTJ.s:1759   .debug_str:0000000000000566 .LASF29
+     /tmp/ccZEVeTJ.s:1659   .debug_str:00000000000002ac .LASF33
+     /tmp/ccZEVeTJ.s:1657   .debug_str:0000000000000297 .LASF35
+     /tmp/ccZEVeTJ.s:1765   .debug_str:00000000000005a6 .LASF28
+     /tmp/ccZEVeTJ.s:1621   .debug_str:00000000000000af .LASF30
+     /tmp/ccZEVeTJ.s:1753   .debug_str:0000000000000545 .LASF31
+     /tmp/ccZEVeTJ.s:1737   .debug_str:00000000000004d7 .LASF32
+     /tmp/ccZEVeTJ.s:1743   .debug_str:00000000000004f7 .LASF34
+     /tmp/ccZEVeTJ.s:1763   .debug_str:0000000000000593 .LASF36
+     /tmp/ccZEVeTJ.s:1671   .debug_str:00000000000002f3 .LASF37
+     /tmp/ccZEVeTJ.s:1649   .debug_str:000000000000025e .LASF38
+     /tmp/ccZEVeTJ.s:1603   .debug_str:0000000000000000 .LASF39
+     /tmp/ccZEVeTJ.s:1679   .debug_str:0000000000000325 .LASF40
+     /tmp/ccZEVeTJ.s:1663   .debug_str:00000000000002bf .LASF41
+     /tmp/ccZEVeTJ.s:1633   .debug_str:00000000000001c4 .LASF42
+     /tmp/ccZEVeTJ.s:1681   .debug_str:0000000000000339 .LASF43
+     /tmp/ccZEVeTJ.s:1665   .debug_str:00000000000002c7 .LASF44
+     /tmp/ccZEVeTJ.s:1637   .debug_str:00000000000001e9 .LASF45
+     /tmp/ccZEVeTJ.s:1683   .debug_str:0000000000000341 .LASF46
+     /tmp/ccZEVeTJ.s:1709   .debug_str:0000000000000443 .LASF47
+     /tmp/ccZEVeTJ.s:1677   .debug_str:000000000000030f .LASF48
+     /tmp/ccZEVeTJ.s:1797   .debug_str:000000000000067b .LASF49
+     /tmp/ccZEVeTJ.s:1749   .debug_str:000000000000051b .LASF50
+     /tmp/ccZEVeTJ.s:1687   .debug_str:000000000000035e .LASF51
+     /tmp/ccZEVeTJ.s:1761   .debug_str:000000000000057b .LASF52
+     /tmp/ccZEVeTJ.s:1719   .debug_str:000000000000047c .LASF53
+     /tmp/ccZEVeTJ.s:1791   .debug_str:000000000000064b .LASF54
+     /tmp/ccZEVeTJ.s:1777   .debug_str:00000000000005ff .LASF55
+     /tmp/ccZEVeTJ.s:1669   .debug_str:00000000000002e0 .LASF56
+     /tmp/ccZEVeTJ.s:1673   .debug_str:00000000000002fb .LASF57
+     /tmp/ccZEVeTJ.s:1767   .debug_str:00000000000005ab .LASF58
+     /tmp/ccZEVeTJ.s:1755   .debug_str:000000000000054c .LASF60
+     /tmp/ccZEVeTJ.s:1795   .debug_str:0000000000000663 .LASF62
+     /tmp/ccZEVeTJ.s:1701   .debug_str:0000000000000416 .LASF63
+     /tmp/ccZEVeTJ.s:1689   .debug_str:0000000000000369 .LASF97
+     /tmp/ccZEVeTJ.s:1783   .debug_str:0000000000000620 .LASF64
+     /tmp/ccZEVeTJ.s:1741   .debug_str:00000000000004f2 .LASF65
+     /tmp/ccZEVeTJ.s:1789   .debug_str:0000000000000646 .LASF66
+     /tmp/ccZEVeTJ.s:1713   .debug_str:0000000000000457 .LASF67
+     /tmp/ccZEVeTJ.s:1793   .debug_str:000000000000065e .LASF68
+     /tmp/ccZEVeTJ.s:1721   .debug_str:0000000000000483 .LASF69
+     /tmp/ccZEVeTJ.s:1769   .debug_str:00000000000005bd .LASF70
+GAS LISTING /tmp/ccZEVeTJ.s 			page 10
+
+
+     /tmp/ccZEVeTJ.s:1775   .debug_str:00000000000005f4 .LASF71
+     /tmp/ccZEVeTJ.s:1605   .debug_str:0000000000000008 .LASF73
+     /tmp/ccZEVeTJ.s:1781   .debug_str:0000000000000616 .LASF72
+     /tmp/ccZEVeTJ.s:1615   .debug_str:000000000000006c .LASF74
+     /tmp/ccZEVeTJ.s:1653   .debug_str:0000000000000277 .LASF76
+     /tmp/ccZEVeTJ.s:1635   .debug_str:00000000000001d8 .LASF75
+     /tmp/ccZEVeTJ.s:1787   .debug_str:000000000000062d .LASF77
+     /tmp/ccZEVeTJ.s:1699   .debug_str:00000000000003fa .LASF78
+     /tmp/ccZEVeTJ.s:1711   .debug_str:000000000000044d .LASF79
+     /tmp/ccZEVeTJ.s:1693   .debug_str:00000000000003ad .LASF80
+     /tmp/ccZEVeTJ.s:1661   .debug_str:00000000000002b5 .LASF81
+     /tmp/ccZEVeTJ.s:1607   .debug_str:000000000000002b .LASF82
+     /tmp/ccZEVeTJ.s:1705   .debug_str:000000000000042c .LASF83
+     /tmp/ccZEVeTJ.s:1643   .debug_str:000000000000020b .LASF84
+     /tmp/ccZEVeTJ.s:1651   .debug_str:0000000000000272 .LASF85
+     /tmp/ccZEVeTJ.s:1703   .debug_str:0000000000000426 .LASF98
+     /tmp/ccZEVeTJ.s:1667   .debug_str:00000000000002db .LASF86
+     /tmp/ccZEVeTJ.s:48     .text:000000000000003c .LFB1
+     /tmp/ccZEVeTJ.s:213    .text:0000000000000118 .LFE1
+     /tmp/ccZEVeTJ.s:1613   .debug_str:0000000000000065 .LASF87
+     /tmp/ccZEVeTJ.s:1555   .debug_loc:0000000000000000 .LLST0
+     /tmp/ccZEVeTJ.s:1593   .debug_ranges:0000000000000000 .Ldebug_ranges0
+     /tmp/ccZEVeTJ.s:1723   .debug_str:000000000000048c .LASF88
+     /tmp/ccZEVeTJ.s:1739   .debug_str:00000000000004ea .LASF89
+     /tmp/ccZEVeTJ.s:1655   .debug_str:0000000000000290 .LASF90
+     /tmp/ccZEVeTJ.s:1735   .debug_str:00000000000004d1 .LASF91
+     /tmp/ccZEVeTJ.s:1773   .debug_str:00000000000005ec .LASF92
+     /tmp/ccZEVeTJ.s:1562   .debug_loc:0000000000000023 .LLST1
+     /tmp/ccZEVeTJ.s:142    .text:00000000000000d0 .LBB5
+     /tmp/ccZEVeTJ.s:208    .text:0000000000000118 .LBE5
+     /tmp/ccZEVeTJ.s:1573   .debug_loc:0000000000000059 .LLST2
+     /tmp/ccZEVeTJ.s:156    .text:00000000000000dc .LVL10
+     /tmp/ccZEVeTJ.s:160    .text:00000000000000e8 .LVL11
+     /tmp/ccZEVeTJ.s:189    .text:0000000000000100 .LVL14
+     /tmp/ccZEVeTJ.s:193    .text:000000000000010c .LVL15
+     /tmp/ccZEVeTJ.s:94     .text:0000000000000080 .LVL4
+     /tmp/ccZEVeTJ.s:102    .text:0000000000000090 .LVL5
+     /tmp/ccZEVeTJ.s:108    .text:000000000000009c .LVL6
+     /tmp/ccZEVeTJ.s:128    .text:00000000000000c0 .LVL7
+     /tmp/ccZEVeTJ.s:133    .text:00000000000000cc .LVL8
+     /tmp/ccZEVeTJ.s:64     .text:0000000000000058 .LVL2
+     /tmp/ccZEVeTJ.s:10     .text:0000000000000000 .LFB0
+     /tmp/ccZEVeTJ.s:42     .text:000000000000003c .LFE0
+     /tmp/ccZEVeTJ.s:26     .text:0000000000000020 .LVL0
+     /tmp/ccZEVeTJ.s:31     .text:000000000000002c .LVL1
+     /tmp/ccZEVeTJ.s:69     .text:000000000000005c .LVL3
+     /tmp/ccZEVeTJ.s:175    .text:00000000000000f4 .LVL12
+     /tmp/ccZEVeTJ.s:184    .text:00000000000000f8 .LVL13
+     /tmp/ccZEVeTJ.s:151    .text:00000000000000d4 .LVL9
+     /tmp/ccZEVeTJ.s:221    .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccZEVeTJ.s:90     .text:0000000000000078 .LBB3
+     /tmp/ccZEVeTJ.s:134    .text:00000000000000cc .LBE3
+     /tmp/ccZEVeTJ.s:140    .text:00000000000000d0 .LBB7
+     /tmp/ccZEVeTJ.s:210    .text:0000000000000118 .LBE7
+
+UNDEFINED SYMBOLS
+_ZN6Kernel14supervisorTrapEv
+GAS LISTING /tmp/ccZEVeTJ.s 			page 11
+
+
+_ZN5Riscv7w_stvecEm
+_ZN5Riscv10ms_sstatusEm
+_ZN5Riscv8r_scauseEv
+_ZN5Riscv6r_sepcEv
+_ZN5Riscv9r_sstatusEv
+_ZN5Riscv4r_a0Ev
+_ZN5Riscv9w_sstatusEm
+_ZN5Riscv6w_sepcEm
+_ZN15MemoryAllocator8instanceEv
+_ZN15MemoryAllocator10kmem_allocEm
+_ZN15MemoryAllocator9kmem_freeEPv

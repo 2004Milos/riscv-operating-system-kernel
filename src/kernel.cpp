@@ -1,34 +1,57 @@
 #include "../h/kernel.hpp"
 #include "../h/riscv.hpp"
 #include "../h/memory_allocator.hpp"
+#include "../lib/console.h"
 
 
 void Kernel::init() {
-
-    // set trap vector
+    // set trap routine
     Riscv::w_stvec((uint64)&supervisorTrap);
+    //Riscv::ms_sstatus(Riscv::SstatusBits::SSTATUS_SIE);
 }
 
-void Kernel::trapHandler(uint64 a0, uint64 a1, uint64 a2, uint64 a3, uint64 a4)
+
+void Kernel::supervisorTrapHandler()
 {
-    uint64 scause = Riscv::r_scause();
-    while (true);
-}
+    uint32 scause = Riscv::r_scause();
 
-void Kernel::syscallHandler(uint64 id, uint64 a1, uint64 a2, uint64 a3, uint64 a4)
-{
-    switch (id) {
-        case 0x01:
-            __asm__ volatile("mv a0, %0" : : "r"(MemoryAllocator::instance().kmem_alloc(a1)));
-            break;
+    if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)
+    {
+        // Not external interupt
+        // ecall from user or supervisor mode
 
-        case 0x02:
-            __asm__ volatile("mv a0, %0" : : "r"(MemoryAllocator::instance().kmem_free((void*)a1)));
-            break;
+        uint64 volatile sepc = Riscv::r_sepc() + 4;
+        uint64 volatile sstatus =  Riscv::r_sstatus();
+        uint64 volatile opcode = Riscv::r_a0();
+        int value;
+        void* pointer;
+        
+        switch (opcode) {
+            case 0x01: //mem_alloc
+                size_t size;
+                __asm__ volatile("mv %0, a1" : "=r" (size));
 
+                pointer = MemoryAllocator::instance().kmem_alloc(size);
 
+                __asm__ volatile("mv t0, %0" : : "r"(pointer));
+                __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to return value
+                break;
 
-        //default:
-        //    __asm__ volatile("mv a0, %0" : : "r"((uint64)-1));
+            case 0x02: //mem_free
+                __asm__ volatile("mv %0, a1" : "=r" (pointer));
+
+                value = MemoryAllocator::instance().kmem_free(pointer);
+
+                __asm__ volatile("mv t0, %0" : : "r"(value));
+                __asm__ volatile ("sd t0, 80(x8)"); //override previously stored a0 in memory to return value
+                break;
+            default:
+                break;
+        }
+
+        Riscv::w_sstatus(sstatus);
+        Riscv::w_sepc(sepc);
     }
+    
+    return;
 }

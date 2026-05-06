@@ -7,8 +7,8 @@
 constexpr unsigned long SYS_MEM_ALLOC = 0x01;
 constexpr unsigned long SYS_MEM_FREE  = 0x02;
 
-void* mem_alloc(size_t size);
-int   mem_free(void* ptr);
+void* mem_alloc(size_t);
+int   mem_free(void*);
 
 
 #endif

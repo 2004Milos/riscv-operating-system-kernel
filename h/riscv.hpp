@@ -7,19 +7,21 @@ class Riscv {
 public:
     // CSR read/write
     static uint64 r_scause();
-    static void    w_scause(uint64);
+    static void w_scause(uint64);
+
+    static uint64 r_a0();
 
     static uint64 r_sepc();
-    static void    w_sepc(uint64);
+    static void w_sepc(uint64);
 
     static uint64 r_stvec();
-    static void    w_stvec(uint64);
+    static void w_stvec(uint64);
 
     static uint64 r_stval();
-    static void    w_stval(uint64);
+    static void w_stval(uint64);
 
     static uint64 r_sstatus();
-    static void    w_sstatus(uint64);
+    static void w_sstatus(uint64);
 
     // bit operations
     static void ms_sstatus(uint64 mask);
@@ -36,6 +38,8 @@ public:
         SSTATUS_SPIE = (1 << 5),
         SSTATUS_SPP  = (1 << 8)
     };
+    
+
 };
 
 #endif
