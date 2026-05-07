@@ -1,8 +1,6 @@
 #include "../h/memory_allocator.hpp"
 #include "../lib/console.h"
 
-
-
 MemoryAllocator& MemoryAllocator::instance() {
     static MemoryAllocator inst;
     return inst;
@@ -30,8 +28,6 @@ void* MemoryAllocator::kmem_alloc(size_t size) {
 
     // aligned size in bytes
     size_t aligned = size * MEM_BLOCK_SIZE;
-
-    __putc('r');
 
     if (!head) kmem_init();
     
@@ -85,7 +81,7 @@ int MemoryAllocator::kmem_free(void* ptr) {
     if ((char*)ptr < (char*)HEAP_START_ADDR || (char*)ptr > (char*)HEAP_END_ADDR) return -2;
 
     ChunkHeader* chunkHeader = (ChunkHeader*)((char*)ptr - sizeof(ChunkHeader));
-    if(chunkHeader->magic != MAGIC) return -3;
+    if(chunkHeader->magic != MAGIC || chunkHeader->free) return -3;
 
     chunkHeader->free = true;
 

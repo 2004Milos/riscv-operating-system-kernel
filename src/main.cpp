@@ -4,36 +4,17 @@
 #include "../h/kernel.hpp"
 #include "../h/memory_allocator.hpp"
 
-void print_hex(unsigned long long x)
-{
-    char hex[] = "0123456789abcdef";
-
-    __putc('0');
-    __putc('x');
-
-    for (int i = (sizeof(unsigned long long) * 8) - 4; i >= 0; i -= 4) {
-        __putc(hex[(x >> i) & 0xF]);
-    }
-}
-
-void print_ptr(void* p)
-{
-    print_hex((unsigned long long)p);
-}
-
-
 
 void main()
 {
     Kernel::init();
-
-    char* ptr = (char*) mem_alloc(sizeof(char));
-    char* ptr1 = (char*) mem_alloc(sizeof(char));
-    char* ptr2 = (char*) mem_alloc(sizeof(char));
-    print_ptr(ptr);
-    print_ptr(ptr1);
-    print_ptr(ptr2);
-
+    Kernel::print_int((long long)MEM_BLOCK_SIZE, 16, 0);
+    __putc('\n');
+    Kernel::print_int((long long)HEAP_START_ADDR, 16, 0);
+    __putc('\n');
+    Kernel::print_int((long long)HEAP_END_ADDR, 16, 0);
+    __putc('\n');
+    __putc('\n');
 
     return;
 }
