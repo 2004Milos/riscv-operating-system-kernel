@@ -1,0 +1,336 @@
+GAS LISTING /tmp/ccEJbMrS.s 			page 1
+
+
+   1              		.file	"_new.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	_Znwm
+   9              	_Znwm:
+  10              	.LFB17:
+  11              		.file 1 "src/_new.cpp"
+   1:src/_new.cpp  **** 
+   2:src/_new.cpp  **** #include "../h/syscall_c.hpp"
+   3:src/_new.cpp  **** #include "../h/memory_allocator.hpp"
+   4:src/_new.cpp  **** 
+   5:src/_new.cpp  **** using size_t = decltype(sizeof(0));
+   6:src/_new.cpp  **** 
+   7:src/_new.cpp  **** 
+   8:src/_new.cpp  **** void *operator new(size_t n)
+   9:src/_new.cpp  **** {
+  12              		.loc 1 9 1
+  13              		.cfi_startproc
+  14              	.LVL0:
+  15 0000 130101FF 		addi	sp,sp,-16
+  16              		.cfi_def_cfa_offset 16
+  17 0004 23341100 		sd	ra,8(sp)
+  18 0008 23308100 		sd	s0,0(sp)
+  19              		.cfi_offset 1, -8
+  20              		.cfi_offset 8, -16
+  21 000c 13040101 		addi	s0,sp,16
+  22              		.cfi_def_cfa 8, 0
+  10:src/_new.cpp  ****     return mem_alloc(n);
+  23              		.loc 1 10 5
+  24              		.loc 1 10 21 is_stmt 0
+  25 0010 97000000 		call	_Z9mem_allocm@plt
+  25      E7800000 
+  26              	.LVL1:
+  11:src/_new.cpp  **** }
+  27              		.loc 1 11 1
+  28 0018 83308100 		ld	ra,8(sp)
+  29              		.cfi_restore 1
+  30 001c 03340100 		ld	s0,0(sp)
+  31              		.cfi_restore 8
+  32              		.cfi_def_cfa 2, 16
+  33 0020 13010101 		addi	sp,sp,16
+  34              		.cfi_def_cfa_offset 0
+  35 0024 67800000 		jr	ra
+  36              		.cfi_endproc
+  37              	.LFE17:
+  39              		.align	2
+  40              		.globl	_Znam
+  42              	_Znam:
+  43              	.LFB18:
+  12:src/_new.cpp  **** 
+  13:src/_new.cpp  **** void *operator new[](size_t n)
+  14:src/_new.cpp  **** {
+  44              		.loc 1 14 1 is_stmt 1
+  45              		.cfi_startproc
+GAS LISTING /tmp/ccEJbMrS.s 			page 2
+
+
+  46              	.LVL2:
+  47 0028 130101FF 		addi	sp,sp,-16
+  48              		.cfi_def_cfa_offset 16
+  49 002c 23341100 		sd	ra,8(sp)
+  50 0030 23308100 		sd	s0,0(sp)
+  51              		.cfi_offset 1, -8
+  52              		.cfi_offset 8, -16
+  53 0034 13040101 		addi	s0,sp,16
+  54              		.cfi_def_cfa 8, 0
+  15:src/_new.cpp  ****     return mem_alloc(n);
+  55              		.loc 1 15 5
+  56              		.loc 1 15 21 is_stmt 0
+  57 0038 97000000 		call	_Z9mem_allocm@plt
+  57      E7800000 
+  58              	.LVL3:
+  16:src/_new.cpp  **** }
+  59              		.loc 1 16 1
+  60 0040 83308100 		ld	ra,8(sp)
+  61              		.cfi_restore 1
+  62 0044 03340100 		ld	s0,0(sp)
+  63              		.cfi_restore 8
+  64              		.cfi_def_cfa 2, 16
+  65 0048 13010101 		addi	sp,sp,16
+  66              		.cfi_def_cfa_offset 0
+  67 004c 67800000 		jr	ra
+  68              		.cfi_endproc
+  69              	.LFE18:
+  71              		.align	2
+  72              		.globl	_ZdlPv
+  74              	_ZdlPv:
+  75              	.LFB19:
+  17:src/_new.cpp  **** 
+  18:src/_new.cpp  **** void operator delete(void *p) noexcept
+  19:src/_new.cpp  **** {
+  76              		.loc 1 19 1 is_stmt 1
+  77              		.cfi_startproc
+  78              		.cfi_personality 0x9b,DW.ref.__gxx_personality_v0
+  79              		.cfi_lsda 0x1b,.LLSDA19
+  80              	.LVL4:
+  81 0050 130101FF 		addi	sp,sp,-16
+  82              		.cfi_def_cfa_offset 16
+  83 0054 23341100 		sd	ra,8(sp)
+  84 0058 23308100 		sd	s0,0(sp)
+  85              		.cfi_offset 1, -8
+  86              		.cfi_offset 8, -16
+  87 005c 13040101 		addi	s0,sp,16
+  88              		.cfi_def_cfa 8, 0
+  20:src/_new.cpp  ****     mem_free(p);
+  89              		.loc 1 20 5
+  90              		.loc 1 20 13 is_stmt 0
+  91 0060 97000000 		call	_Z8mem_freePv@plt
+  91      E7800000 
+  92              	.LVL5:
+  21:src/_new.cpp  **** }
+  93              		.loc 1 21 1
+  94 0068 83308100 		ld	ra,8(sp)
+  95              		.cfi_restore 1
+GAS LISTING /tmp/ccEJbMrS.s 			page 3
+
+
+  96 006c 03340100 		ld	s0,0(sp)
+  97              		.cfi_restore 8
+  98              		.cfi_def_cfa 2, 16
+  99 0070 13010101 		addi	sp,sp,16
+ 100              		.cfi_def_cfa_offset 0
+ 101 0074 67800000 		jr	ra
+ 102              		.cfi_endproc
+ 103              	.LFE19:
+ 104              		.globl	__gxx_personality_v0
+ 105              		.section	.gcc_except_table,"a",@progbits
+ 106              	.LLSDA19:
+ 107 0000 FF       		.byte	0xff
+ 108 0001 FF       		.byte	0xff
+ 109 0002 03       		.byte	0x3
+ 110 0003 00       		.byte	0
+ 111              		.text
+ 113              		.align	2
+ 114              		.globl	_ZdaPv
+ 116              	_ZdaPv:
+ 117              	.LFB20:
+  22:src/_new.cpp  **** 
+  23:src/_new.cpp  **** void operator delete[](void *p) noexcept
+  24:src/_new.cpp  **** {
+ 118              		.loc 1 24 1 is_stmt 1
+ 119              		.cfi_startproc
+ 120              		.cfi_personality 0x9b,DW.ref.__gxx_personality_v0
+ 121              		.cfi_lsda 0x1b,.LLSDA20
+ 122              	.LVL6:
+ 123 0078 130101FF 		addi	sp,sp,-16
+ 124              		.cfi_def_cfa_offset 16
+ 125 007c 23341100 		sd	ra,8(sp)
+ 126 0080 23308100 		sd	s0,0(sp)
+ 127              		.cfi_offset 1, -8
+ 128              		.cfi_offset 8, -16
+ 129 0084 13040101 		addi	s0,sp,16
+ 130              		.cfi_def_cfa 8, 0
+  25:src/_new.cpp  ****     mem_free(p);
+ 131              		.loc 1 25 5
+ 132              		.loc 1 25 13 is_stmt 0
+ 133 0088 97000000 		call	_Z8mem_freePv@plt
+ 133      E7800000 
+ 134              	.LVL7:
+  26:src/_new.cpp  **** }...
+ 135              		.loc 1 26 1
+ 136 0090 83308100 		ld	ra,8(sp)
+ 137              		.cfi_restore 1
+ 138 0094 03340100 		ld	s0,0(sp)
+ 139              		.cfi_restore 8
+ 140              		.cfi_def_cfa 2, 16
+ 141 0098 13010101 		addi	sp,sp,16
+ 142              		.cfi_def_cfa_offset 0
+ 143 009c 67800000 		jr	ra
+ 144              		.cfi_endproc
+ 145              	.LFE20:
+ 146              		.section	.gcc_except_table
+ 147              	.LLSDA20:
+ 148 0004 FF       		.byte	0xff
+GAS LISTING /tmp/ccEJbMrS.s 			page 4
+
+
+ 149 0005 FF       		.byte	0xff
+ 150 0006 03       		.byte	0x3
+ 151 0007 00       		.byte	0
+ 152              		.text
+ 154              	.Letext0:
+ 155              		.file 2 "src/../h/../lib/hw.h"
+ 156              		.file 3 "src/../h/syscall_c.hpp"
+ 855              		.align	3
+ 858              	DW.ref.__gxx_personality_v0:
+ 859 0000 00000000 		.dword	__gxx_personality_v0
+ 859      00000000 
+ 860              		.ident	"GCC: (Ubuntu 9.4.0-1ubuntu1~20.04) 9.4.0"
+ 861              		.section	.note.GNU-stack,"",@progbits
+GAS LISTING /tmp/ccEJbMrS.s 			page 5
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 _new.cpp
+     /tmp/ccEJbMrS.s:9      .text:0000000000000000 _Znwm
+     /tmp/ccEJbMrS.s:13     .text:0000000000000000 .L0 
+     /tmp/ccEJbMrS.s:15     .text:0000000000000000 .L0 
+     /tmp/ccEJbMrS.s:16     .text:0000000000000004 .L0 
+     /tmp/ccEJbMrS.s:19     .text:000000000000000c .L0 
+     /tmp/ccEJbMrS.s:20     .text:000000000000000c .L0 
+     /tmp/ccEJbMrS.s:22     .text:0000000000000010 .L0 
+     /tmp/ccEJbMrS.s:24     .text:0000000000000010 .L0 
+     /tmp/ccEJbMrS.s:25     .text:0000000000000010 .L0 
+     /tmp/ccEJbMrS.s:28     .text:0000000000000018 .L0 
+     /tmp/ccEJbMrS.s:29     .text:000000000000001c .L0 
+     /tmp/ccEJbMrS.s:31     .text:0000000000000020 .L0 
+     /tmp/ccEJbMrS.s:32     .text:0000000000000020 .L0 
+     /tmp/ccEJbMrS.s:34     .text:0000000000000024 .L0 
+     /tmp/ccEJbMrS.s:36     .text:0000000000000028 .L0 
+     /tmp/ccEJbMrS.s:42     .text:0000000000000028 _Znam
+     /tmp/ccEJbMrS.s:45     .text:0000000000000028 .L0 
+     /tmp/ccEJbMrS.s:47     .text:0000000000000028 .L0 
+     /tmp/ccEJbMrS.s:48     .text:000000000000002c .L0 
+     /tmp/ccEJbMrS.s:51     .text:0000000000000034 .L0 
+     /tmp/ccEJbMrS.s:52     .text:0000000000000034 .L0 
+     /tmp/ccEJbMrS.s:54     .text:0000000000000038 .L0 
+     /tmp/ccEJbMrS.s:56     .text:0000000000000038 .L0 
+     /tmp/ccEJbMrS.s:57     .text:0000000000000038 .L0 
+     /tmp/ccEJbMrS.s:60     .text:0000000000000040 .L0 
+     /tmp/ccEJbMrS.s:61     .text:0000000000000044 .L0 
+     /tmp/ccEJbMrS.s:63     .text:0000000000000048 .L0 
+     /tmp/ccEJbMrS.s:64     .text:0000000000000048 .L0 
+     /tmp/ccEJbMrS.s:66     .text:000000000000004c .L0 
+     /tmp/ccEJbMrS.s:68     .text:0000000000000050 .L0 
+     /tmp/ccEJbMrS.s:74     .text:0000000000000050 _ZdlPv
+     /tmp/ccEJbMrS.s:77     .text:0000000000000050 .L0 
+     /tmp/ccEJbMrS.s:858    .data.rel.local.DW.ref.__gxx_personality_v0:0000000000000000 DW.ref.__gxx_personality_v0
+     /tmp/ccEJbMrS.s:81     .text:0000000000000050 .L0 
+     /tmp/ccEJbMrS.s:82     .text:0000000000000054 .L0 
+     /tmp/ccEJbMrS.s:85     .text:000000000000005c .L0 
+     /tmp/ccEJbMrS.s:86     .text:000000000000005c .L0 
+     /tmp/ccEJbMrS.s:88     .text:0000000000000060 .L0 
+     /tmp/ccEJbMrS.s:90     .text:0000000000000060 .L0 
+     /tmp/ccEJbMrS.s:91     .text:0000000000000060 .L0 
+     /tmp/ccEJbMrS.s:94     .text:0000000000000068 .L0 
+     /tmp/ccEJbMrS.s:95     .text:000000000000006c .L0 
+     /tmp/ccEJbMrS.s:97     .text:0000000000000070 .L0 
+     /tmp/ccEJbMrS.s:98     .text:0000000000000070 .L0 
+     /tmp/ccEJbMrS.s:100    .text:0000000000000074 .L0 
+     /tmp/ccEJbMrS.s:102    .text:0000000000000078 .L0 
+     /tmp/ccEJbMrS.s:116    .text:0000000000000078 _ZdaPv
+     /tmp/ccEJbMrS.s:119    .text:0000000000000078 .L0 
+     /tmp/ccEJbMrS.s:123    .text:0000000000000078 .L0 
+     /tmp/ccEJbMrS.s:124    .text:000000000000007c .L0 
+     /tmp/ccEJbMrS.s:127    .text:0000000000000084 .L0 
+     /tmp/ccEJbMrS.s:128    .text:0000000000000084 .L0 
+     /tmp/ccEJbMrS.s:130    .text:0000000000000088 .L0 
+     /tmp/ccEJbMrS.s:132    .text:0000000000000088 .L0 
+     /tmp/ccEJbMrS.s:133    .text:0000000000000088 .L0 
+GAS LISTING /tmp/ccEJbMrS.s 			page 6
+
+
+     /tmp/ccEJbMrS.s:136    .text:0000000000000090 .L0 
+     /tmp/ccEJbMrS.s:137    .text:0000000000000094 .L0 
+     /tmp/ccEJbMrS.s:139    .text:0000000000000098 .L0 
+     /tmp/ccEJbMrS.s:140    .text:0000000000000098 .L0 
+     /tmp/ccEJbMrS.s:142    .text:000000000000009c .L0 
+     /tmp/ccEJbMrS.s:144    .text:00000000000000a0 .L0 
+     /tmp/ccEJbMrS.s:157    .text:00000000000000a0 .L0 
+     /tmp/ccEJbMrS.s:441    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccEJbMrS.s:842    .debug_str:00000000000001bd .LASF32
+     /tmp/ccEJbMrS.s:846    .debug_str:0000000000000290 .LASF33
+     /tmp/ccEJbMrS.s:806    .debug_str:000000000000009d .LASF34
+     /tmp/ccEJbMrS.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccEJbMrS.s:154    .text:00000000000000a0 .Letext0
+     /tmp/ccEJbMrS.s:780    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccEJbMrS.s:816    .debug_str:0000000000000103 .LASF0
+     /tmp/ccEJbMrS.s:818    .debug_str:0000000000000110 .LASF1
+     /tmp/ccEJbMrS.s:812    .debug_str:00000000000000e2 .LASF2
+     /tmp/ccEJbMrS.s:804    .debug_str:0000000000000096 .LASF4
+     /tmp/ccEJbMrS.s:832    .debug_str:0000000000000171 .LASF3
+     /tmp/ccEJbMrS.s:784    .debug_str:0000000000000010 .LASF5
+     /tmp/ccEJbMrS.s:820    .debug_str:0000000000000123 .LASF6
+     /tmp/ccEJbMrS.s:814    .debug_str:00000000000000f0 .LASF7
+     /tmp/ccEJbMrS.s:848    .debug_str:000000000000029d .LASF8
+     /tmp/ccEJbMrS.s:802    .debug_str:0000000000000088 .LASF9
+     /tmp/ccEJbMrS.s:824    .debug_str:000000000000013c .LASF10
+     /tmp/ccEJbMrS.s:844    .debug_str:0000000000000281 .LASF11
+     /tmp/ccEJbMrS.s:786    .debug_str:0000000000000017 .LASF12
+     /tmp/ccEJbMrS.s:782    .debug_str:0000000000000000 .LASF13
+     /tmp/ccEJbMrS.s:790    .debug_str:0000000000000035 .LASF14
+     /tmp/ccEJbMrS.s:828    .debug_str:0000000000000154 .LASF15
+     /tmp/ccEJbMrS.s:794    .debug_str:000000000000004f .LASF16
+     /tmp/ccEJbMrS.s:796    .debug_str:0000000000000065 .LASF17
+     /tmp/ccEJbMrS.s:788    .debug_str:0000000000000027 .LASF18
+     /tmp/ccEJbMrS.s:840    .debug_str:00000000000001b0 .LASF19
+     /tmp/ccEJbMrS.s:838    .debug_str:000000000000019d .LASF20
+     /tmp/ccEJbMrS.s:830    .debug_str:000000000000016a .LASF22
+     /tmp/ccEJbMrS.s:117    .text:0000000000000078 .LFB20
+     /tmp/ccEJbMrS.s:145    .text:00000000000000a0 .LFE20
+     /tmp/ccEJbMrS.s:711    .debug_loc:0000000000000000 .LLST3
+     /tmp/ccEJbMrS.s:134    .text:0000000000000090 .LVL7
+     /tmp/ccEJbMrS.s:836    .debug_str:000000000000018d .LASF21
+     /tmp/ccEJbMrS.s:810    .debug_str:00000000000000db .LASF23
+     /tmp/ccEJbMrS.s:75     .text:0000000000000050 .LFB19
+     /tmp/ccEJbMrS.s:103    .text:0000000000000078 .LFE19
+     /tmp/ccEJbMrS.s:725    .debug_loc:0000000000000039 .LLST2
+     /tmp/ccEJbMrS.s:92     .text:0000000000000068 .LVL5
+     /tmp/ccEJbMrS.s:800    .debug_str:0000000000000078 .LASF24
+     /tmp/ccEJbMrS.s:822    .debug_str:0000000000000136 .LASF26
+     /tmp/ccEJbMrS.s:43     .text:0000000000000028 .LFB18
+     /tmp/ccEJbMrS.s:69     .text:0000000000000050 .LFE18
+     /tmp/ccEJbMrS.s:739    .debug_loc:0000000000000072 .LLST1
+     /tmp/ccEJbMrS.s:58     .text:0000000000000040 .LVL3
+     /tmp/ccEJbMrS.s:850    .debug_str:00000000000002ad .LASF25
+     /tmp/ccEJbMrS.s:808    .debug_str:00000000000000d5 .LASF27
+     /tmp/ccEJbMrS.s:10     .text:0000000000000000 .LFB17
+     /tmp/ccEJbMrS.s:37     .text:0000000000000028 .LFE17
+     /tmp/ccEJbMrS.s:753    .debug_loc:00000000000000ab .LLST0
+GAS LISTING /tmp/ccEJbMrS.s 			page 7
+
+
+     /tmp/ccEJbMrS.s:26     .text:0000000000000018 .LVL1
+     /tmp/ccEJbMrS.s:798    .debug_str:000000000000006a .LASF28
+     /tmp/ccEJbMrS.s:826    .debug_str:000000000000014b .LASF30
+     /tmp/ccEJbMrS.s:792    .debug_str:0000000000000041 .LASF29
+     /tmp/ccEJbMrS.s:834    .debug_str:0000000000000183 .LASF31
+     /tmp/ccEJbMrS.s:122    .text:0000000000000078 .LVL6
+     /tmp/ccEJbMrS.s:80     .text:0000000000000050 .LVL4
+     /tmp/ccEJbMrS.s:46     .text:0000000000000028 .LVL2
+     /tmp/ccEJbMrS.s:14     .text:0000000000000000 .LVL0
+     /tmp/ccEJbMrS.s:158    .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccEJbMrS.s:106    .gcc_except_table:0000000000000000 .LLSDA19
+     /tmp/ccEJbMrS.s:147    .gcc_except_table:0000000000000004 .LLSDA20
+
+UNDEFINED SYMBOLS
+_Z9mem_allocm
+_Z8mem_freePv
+__gxx_personality_v0

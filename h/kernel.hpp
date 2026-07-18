@@ -38,7 +38,7 @@ public:
 private:
     static void supervisorTrapHandler();
     static void supervisorTrap();
-
+public:
     static inline uint64 r_scause() {
         uint64 volatile x;
         __asm__ volatile("csrr %0, scause" : "=r"(x));
