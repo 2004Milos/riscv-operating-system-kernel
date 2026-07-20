@@ -1,15 +1,12 @@
-//
-// Created by marko on 20.4.22..
-//
-
 #include "../h/tcb.hpp"
 #include "../h/kernel.hpp"
+#include "../h/syscall_c.hpp"
 
 TCB *TCB::running = nullptr;
 
 uint64 TCB::timeSliceCounter = 0;
 
-TCB *TCB::createThread(Body body)
+TCB *TCB::createThread(Body body, void* arg)
 {
     return new TCB(body, TIME_SLICE);
 }
@@ -28,10 +25,26 @@ void TCB::dispatch()
     TCB::contextSwitch(&old->context, &running->context);
 }
 
+void TCB::releaseAll() {
+    while (this->joined.peekFirst()) {
+        TCB* tcb = this->joined.removeFirst();
+        tcb->setBlocked(false);
+        Scheduler::put(tcb);
+    }
+}
+
+void TCB::join(TCB* handle) {
+    if(!handle->isFinished()) {
+        running->setBlocked(true);
+        handle->joined.addLast(running);
+    }
+}
+
 void TCB::threadWrapper()
 {
     Kernel::popSppSpie();
-    running->body();
+    running->body(running->arg);
     running->setFinished(true);
-    TCB::yield();
+    running->releaseAll();
+    thread_dispatch();
 }

@@ -33,6 +33,12 @@ int mem_free (void* ptr) {
     return (int)ret;
 }
 
+/**
+ * C API function to start thread on start_routine function
+ * @param arg pointer to the function argument
+ * @param handle if created successfully here is written the handle of new thread
+ * @return negative error code or 0 for successfull free
+ */
 int thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) {
 
     __asm__ volatile("mv a7, %0" : : "r"(arg));
@@ -44,4 +50,12 @@ int thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) {
     uint64 returnValue;
     __asm__ volatile("mv %0, a0" : "=r"(returnValue));
     return (int)returnValue;
+}
+
+/**
+ * C API function to potentially switch to another thread
+ */
+void thread_dispatch (){
+    __asm__ volatile("li a0, 0x13");
+    __asm__ volatile ("ecall");
 }

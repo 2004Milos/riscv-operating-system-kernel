@@ -14,11 +14,15 @@ public:
 
     void setFinished(bool value) { finished = value; }
 
+    bool isBlocked() const { return this->blocked; }
+
+    void setBlocked(bool value) { this->blocked = value; }
+
     uint64 getTimeSlice() const { return timeSlice; }
 
-    using Body = void (*)();
+    using Body = void (*)(void*); //Body = pointer to function that takes a void pointer as an argument and returns void
 
-    static TCB *createThread(Body body);
+    static TCB *createThread(Body body, void* arg);
 
     static void yield();
 
@@ -48,14 +52,20 @@ private:
     Context context;
     uint64 timeSlice;
     bool finished;
+    bool blocked;
+    void* arg;
+    List<TCB> joined;
 
-    friend class Riscv;
+    friend class Kernel;
 
     static void threadWrapper();
 
     static void contextSwitch(Context *oldContext, Context *runningContext);
-
+    
+    static void join(TCB* handle);
     static void dispatch();
+
+    void releaseAll();
 
     static uint64 timeSliceCounter;
 

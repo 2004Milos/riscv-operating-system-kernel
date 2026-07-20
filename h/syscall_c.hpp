@@ -13,6 +13,7 @@ constexpr unsigned long SYS_MEM_FREE  = 0x02;
 void* mem_alloc(size_t);
 int   mem_free(void*);
 int thread_create(thread_t*, void (*start_routine)(void*), void*);
+void thread_dispatch();
 
 
 #endif

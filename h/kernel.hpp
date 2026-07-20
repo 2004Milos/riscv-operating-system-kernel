@@ -83,7 +83,7 @@ public:
         __asm__ volatile("csrc sstatus, %0" : : "r"(mask));
     }
 
-    static inline uint64 r_sip() {
+    static inline uint64 r_sip() { //koji prekid postoji? bit 0 softver; bit 9 spoljasni hardverski
         uint64 volatile x;
         __asm__ volatile("csrr %0, sip" : "=r"(x));
         return x;
@@ -117,18 +117,17 @@ public:
         __asm__ volatile("csrw stval, %0" : : "r"(x));
     }
 
-    static inline void popSppSpie() {
+    static inline void popSppSpie() { //Kada se vratiš iz trap-a, vrati se u User mode. (spp je prethodni privilegovani režim i treba ga pregaziti)
         mc_sstatus(SSTATUS_SPP);
-        __asm__ volatile("sret");
+        __asm__ volatile("sret"); //vrati se iz trap-a
     }
 
     enum SstatusBits {
-        SSTATUS_SIE  = (1 << 1),
-        SSTATUS_SPIE = (1 << 5),
-        SSTATUS_SPP  = (1 << 8)
+        SSTATUS_SIE  = (1 << 1), //čime se maskiraju spoljašnji prekidi
+        SSTATUS_SPIE = (1 << 5), //prethodna vrednost sia
+        SSTATUS_SPP  = (1 << 8) //Koji je bio privilegovani režim pre nego što je nastao trap
     };
 
 };
-
 
 #endif
