@@ -36,7 +36,7 @@ void TCB::releaseAll() {
 void TCB::join(TCB* handle) {
     if(!handle->isFinished()) {
         running->setBlocked(true);
-        handle->joined.addLast(running);
+        handle->joined.addLast(running); //join this thread to the handle's joined list so it waits for the handle to finish
     }
 }
 
@@ -45,6 +45,6 @@ void TCB::threadWrapper()
     Kernel::popSppSpie();
     running->body(running->arg);
     running->setFinished(true);
-    running->releaseAll();
+    running->releaseAll(); //release all joined threads that are waiting for this thread to finish
     thread_dispatch();
 }

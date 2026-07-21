@@ -53,9 +53,84 @@ int thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) {
 }
 
 /**
+ * C API function to terminate current thread
+ * @return negative error code or 0 for successfull free
+ */
+int thread_exit() {
+    __asm__ volatile("li a0, 0x12");
+    __asm__ volatile("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
  * C API function to potentially switch to another thread
  */
 void thread_dispatch (){
     __asm__ volatile("li a0, 0x13");
     __asm__ volatile ("ecall");
+}
+
+/**
+ * C API function to open a semaphore
+ * @param handle pointer to semaphore handle
+ * @param init initial value of semaphore
+ * @return negative error code or 0 for success
+ */
+int sem_open(sem_t* handle, unsigned init) {
+    __asm__ volatile ("mv a2, %0" : : "r" (init));
+    __asm__ volatile ("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("li a0, 0x21");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
+ * C API function to close a semaphore
+ * @param handle semaphore handle
+ * @return negative error code or 0 for success
+ */
+int sem_close(sem_t handle) {
+    __asm__ volatile ("mv a1, %0" : : "r" (handle));
+    __asm__ volatile("li a0, 0x22");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
+ * C API function to wait on a semaphore
+ * @param id semaphore handle
+ * @return negative error code or 0 for success
+ */
+int sem_wait(sem_t id) {
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
+    __asm__ volatile("li a0, 0x23");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
+ * C API function to signal a semaphore
+ * @param id semaphore handle
+ * @return negative error code or 0 for success
+ */
+int sem_signal(sem_t id) {
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
+    __asm__ volatile("li a0, 0x24");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
 }

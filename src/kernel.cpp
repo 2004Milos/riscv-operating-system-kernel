@@ -2,6 +2,7 @@
 #include "../h/memory_allocator.hpp"
 #include "../lib/console.h"
 #include "../h/tcb.hpp"
+#include "../h/semaphore.hpp"
 
 void Kernel::init() {
     // set trap routine
@@ -24,6 +25,8 @@ void Kernel::supervisorTrapHandler()
         uint64 volatile sstatus =  r_sstatus();
         
         uint64 volatile opcode = r_a0();
+        Semaphore* semHandlePtr;
+        int returnValue;
         
         int value;
         void* pointer;
@@ -69,17 +72,76 @@ void Kernel::supervisorTrapHandler()
                 TCB::running->setFinished(true);
                 TCB::dispatch();
                 __asm__ volatile ("li t0, 0");
-                __asm__ volatile ("sw t0, 80(x8)");
+                __asm__ volatile ("sw t0, 80(x8)"); //override previously stored a0 in memory to return value
                 break;
             case 0x13: // thread_dispatch
                 TCB::dispatch();
                 break;
-            case 0x14: // thread_join
-                TCB* handle;
-                __asm__ volatile ("mv %0, a1" : "=r" (handle));
-                TCB::join(handle);
-                TCB::dispatch();
+            case 0x21: //sem_open
+                unsigned init;
+                Semaphore** semHandle;
+
+                __asm__ volatile ("mv %0, a2" : "=r" (init)); //initial value of semaphore
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandle));
+                *semHandle = Semaphore::createSemaphore(init);
+
+                if(*semHandle != nullptr) {
+                    __asm__ volatile ("li t0, 0"); //load immediate 0 into t0 (success)
+                    __asm__ volatile ("sw t0, 80(x8)"); //override a0 on stack to return value
+                }
+                else {
+                    __asm__ volatile ("li t0, -1"); //load immediate -1 into t0 (error)
+                    __asm__ volatile ("sw t0, 80(x8)");
+                }
                 break;
+            case 0x22: //sem_close
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandlePtr));
+                if(semHandlePtr!= nullptr) {
+                    returnValue = semHandlePtr->close();
+                }
+                else returnValue = -2;
+
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue)); //load return value into temporary register t0
+                __asm__ volatile ("sw t0, 80(x8)"); //override a0 on stack to return value
+                break;
+            case 0x23: //sem_wait
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandlePtr));
+                if(semHandlePtr!= nullptr) {
+                    returnValue = semHandlePtr->kwait_n(1);
+                }
+                else returnValue = -2;
+
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
+                __asm__ volatile ("sw t0, 80(x8)"); 
+                break;
+            case 0x24: //sem_signal
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandlePtr));
+                if(semHandlePtr!= nullptr) {
+                    returnValue = semHandlePtr->ksignal_n(1);
+                }
+                else returnValue = -2;
+
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
+                __asm__ volatile ("sw t0, 80(x8)");
+                break;
+            case 0x25: // sem_wait_n
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandlePtr));
+                __asm__ volatile ("mv %0, a2" : "=r" (value)); //n value
+                if(semHandlePtr!= nullptr) {
+                    returnValue = semHandlePtr->kwait_n(value);
+                }
+                else returnValue = -2;
+
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
+                __asm__ volatile ("sw t0, 80(x8)");
+                break;
+            case 0x26: // sem_signal_n
+                __asm__ volatile ("mv %0, a1" : "=r" (semHandlePtr));
+                __asm__ volatile ("mv %0, a2" : "=r" (value)); //n value
+                if(semHandlePtr!= nullptr) {
+                    returnValue = semHandlePtr->ksignal_n(value);
+                }
+                else returnValue = -2;
             default:
                 break;
         }
