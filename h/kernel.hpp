@@ -51,6 +51,10 @@ public:
         return x;
     }
 
+    static inline void w_a0(uint64 x) {
+        __asm__ volatile("mv a0, %0" : : "r"(x));
+    }
+
     static inline void w_scause(uint64 x) {
         __asm__ volatile("csrw scause, %0" : : "r"(x));
     }
@@ -125,9 +129,15 @@ public:
     enum SstatusBits {
         SSTATUS_SIE  = (1 << 1), //čime se maskiraju spoljašnji prekidi
         SSTATUS_SPIE = (1 << 5), //prethodna vrednost sia
-        SSTATUS_SPP  = (1 << 8) //Koji je bio privilegovani režim pre nego što je nastao trap
+        SSTATUS_SPP  = (1 << 8), //Koji je bio privilegovani režim pre nego što je nastao trap
     };
 
+    enum BitMaskSip
+    {
+        SIP_SSIP = (1UL << 1),
+        SIP_STIP = (1UL << 5),
+        SIP_SEIP = (1UL << 9),
+    };
 };
 
 #endif

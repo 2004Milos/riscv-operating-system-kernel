@@ -11,12 +11,27 @@ private:
         Elem *next;
 
         Elem(T *data, Elem *next) : data(data), next(next) {}
+
+        void* operator new(size_t size) {
+            return MemoryAllocator::instance().kmem_alloc(size);
+        }
+        void* operator new[](size_t size) {
+            return MemoryAllocator::instance().kmem_alloc(size);
+        }
+        
+        void operator delete(void *ptr) {
+            MemoryAllocator::instance().kmem_free(ptr);
+        }
+        void operator delete[](void *ptr) {
+            MemoryAllocator::instance().kmem_free(ptr);
+        }
     };
 
     Elem *head, *tail;
+    size_t size;
 
 public:
-    List() : head(0), tail(0) {}
+    List() : head(0), tail(0), size(0) {}
 
     List(const List<T> &) = delete;
 
@@ -27,6 +42,7 @@ public:
         Elem *elem = new Elem(data, head);
         head = elem;
         if (!tail) { tail = head; }
+        size++;
     }
 
     void addLast(T *data)
@@ -40,6 +56,7 @@ public:
         {
             head = tail = elem;
         }
+        size++;
     }
 
     T *removeFirst()
@@ -52,6 +69,7 @@ public:
 
         T *ret = elem->data;
         delete elem;
+        size--;
         return ret;
     }
 
@@ -78,6 +96,7 @@ public:
 
         T *ret = elem->data;
         delete elem;
+        size--;
         return ret;
     }
 
@@ -86,6 +105,12 @@ public:
         if (!tail) { return 0; }
         return tail->data;
     }
+
+    size_t getSize() {
+        return size;
+    }
+
+
 };
 
 #endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_LIST_HPP

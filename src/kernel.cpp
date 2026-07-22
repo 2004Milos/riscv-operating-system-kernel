@@ -15,8 +15,11 @@ using Body = void (*)(void*);
 void Kernel::supervisorTrapHandler()
 {
     uint32 scause = r_scause();
-
-    if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)
+    if(scause == 0x8000000000000001UL) {//timer interrupt can be recognized by the value 1 only in the least and most significant bits in the scause register.
+        mc_sip(BitMaskSip::SIP_SSIP); //clear the timer interrupt pending bit in the sip register
+        TCB::time_tick();
+    }
+    else if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)
     {
         // Not external interupt
         // ecall from user or supervisor mode
@@ -142,6 +145,13 @@ void Kernel::supervisorTrapHandler()
                     returnValue = semHandlePtr->ksignal_n(value);
                 }
                 else returnValue = -2;
+                break;
+            case 0x31: // time_sleep
+                __asm__ volatile ("mv %0, a1" : "=r" (value)); //time value
+                returnValue = TCB::time_sleep(value);
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
+                __asm__ volatile ("sw t0, 80(x8)");
+                break;
             default:
                 break;
         }

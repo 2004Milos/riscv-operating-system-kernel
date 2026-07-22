@@ -121,6 +121,23 @@ int sem_wait(sem_t id) {
 }
 
 /**
+ * C API function to wait on a semaphore for n resources
+ * @param id semaphore handle
+ * @param n number of resources to wait for
+ * @return negative error code or 0 for success
+ */
+int sem_wait_n(sem_t id, unsigned n) {
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
+    __asm__ volatile ("mv a2, %0" : : "r" (n));
+    __asm__ volatile("li a0, 0x25");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
  * C API function to signal a semaphore
  * @param id semaphore handle
  * @return negative error code or 0 for success
@@ -128,6 +145,38 @@ int sem_wait(sem_t id) {
 int sem_signal(sem_t id) {
     __asm__ volatile ("mv a1, %0" : : "r" (id));
     __asm__ volatile("li a0, 0x24");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
+ * C API function to signal a semaphore for n resources
+ * @param id semaphore handle
+ * @param n number of resources to signal
+ * @return negative error code or 0 for success
+ */
+int sem_signal_n(sem_t id, unsigned n) {
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
+    __asm__ volatile ("mv a2, %0" : : "r" (n));
+    __asm__ volatile("li a0, 0x26");
+    __asm__ volatile ("ecall");
+
+    uint64 returnValue;
+    __asm__ volatile("mv %0, a0" : "=r"(returnValue));
+    return (int)returnValue;
+}
+
+/**
+ * C API function to sleep for a specified time
+ * @param time time to sleep
+ * @return negative error code or 0 for success
+ */
+int time_sleep(time_t time) {
+    __asm__ volatile ("mv a1, %0" : : "r" (time));
+    __asm__ volatile("li a0, 0x31");
     __asm__ volatile ("ecall");
 
     uint64 returnValue;

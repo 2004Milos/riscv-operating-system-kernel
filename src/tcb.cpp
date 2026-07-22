@@ -8,20 +8,25 @@ uint64 TCB::timeSliceCounter = 0;
 
 TCB *TCB::createThread(Body body, void* arg)
 {
-    return new TCB(body, TIME_SLICE);
+    TCB* newTCB = new TCB(body, arg);
+    Scheduler::put(newTCB);
+    return newTCB;
 }
 
 void TCB::yield()
 {
+    Kernel::w_a0(0x13);
     __asm__ volatile ("ecall");
 }
 
 void TCB::dispatch()
 {
     TCB *old = running;
-    if (!old->isFinished()) { Scheduler::put(old); }
+    if (!old->isFinished() && !old->isBlocked() && !old->isSleeping()) {
+        Scheduler::put(old);
+    }
     running = Scheduler::get();
-
+    
     TCB::contextSwitch(&old->context, &running->context);
 }
 
@@ -47,4 +52,34 @@ void TCB::threadWrapper()
     running->setFinished(true);
     running->releaseAll(); //release all joined threads that are waiting for this thread to finish
     thread_dispatch();
+}
+
+int TCB::time_sleep(time_t timeout) {
+    if (timeout == 0) {
+        return 0;
+    }
+
+    if (running->isBlocked() || running->isFinished()) {
+        return -1;
+    }
+
+    running->setSleeping(timeout);
+    SleepingThreads.addLast(running);
+    TCB::dispatch(); //this won't put the sleeping thread back into the ready queue.
+
+    return 0;
+}
+//static
+void TCB::time_tick(){
+
+    for(int i = 0; i < SleepingThreads.getSize(); i++) {
+        TCB* t = SleepingThreads.removeFirst();
+        t->decSleep();
+
+        if (t->isSleeping()) {
+            SleepingThreads.addLast(t);
+        } else {
+            Scheduler::put(t);
+        }
+    }
 }

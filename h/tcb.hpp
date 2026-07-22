@@ -18,7 +18,11 @@ public:
 
     void setBlocked(bool value) { this->blocked = value; }
 
-    uint64 getTimeSlice() const { return timeSlice; }
+    void setSleeping(time_t value) { this->sleepTime = value; }
+
+    bool isSleeping() { return this->sleepTime > 0; }
+
+    void decSleep() { if (this->sleepTime > 0) this->sleepTime--; }
 
     using Body = void (*)(void*); //Body = pointer to function that takes a void pointer as an argument and returns void
 
@@ -26,17 +30,39 @@ public:
 
     static void yield();
 
+    static int time_sleep(uint64 time);
+
+    static void time_tick();
+
     static TCB *running;
 
+    static List<TCB> SleepingThreads;
+
+    void* operator new(size_t size) {
+        return MemoryAllocator::instance().kmem_alloc(size);
+    }
+    void* operator new[](size_t size) {
+        return MemoryAllocator::instance().kmem_alloc(size);
+    }
+    
+    void operator delete(void *ptr) {
+        MemoryAllocator::instance().kmem_free(ptr);
+    }
+    void operator delete[](void *ptr) {
+        MemoryAllocator::instance().kmem_free(ptr);
+    }
+
 private:
-    TCB(Body body, uint64 timeSlice) :
+    TCB(Body body, void* arg)  :
             body(body),
+            arg(arg),
             stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
             context({(uint64) &threadWrapper,
                      stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0
                     }),
-            timeSlice(timeSlice),
-            finished(false)
+            blocked(false),
+            finished(false),
+            sleepTime(0)
     {
         if (body != nullptr) { Scheduler::put(this); }
     }
@@ -50,9 +76,9 @@ private:
     Body body;
     uint64 *stack;
     Context context;
-    uint64 timeSlice;
     bool finished;
     bool blocked;
+    time_t sleepTime;
     void* arg;
     List<TCB> joined;
 
