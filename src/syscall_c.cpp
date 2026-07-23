@@ -183,3 +183,26 @@ int time_sleep(time_t time) {
     __asm__ volatile("mv %0, a0" : "=r"(returnValue));
     return (int)returnValue;
 }
+
+/**
+ * C API function to get a character from the input buffer
+ * @return character from the input buffer
+ */
+char getc() {
+    __asm__ volatile("li a0, 0x41");
+    __asm__ volatile ("ecall");
+
+    char ret;
+    __asm__ volatile("mv %0, a0" : "=r"(ret));
+    return ret;
+}
+
+/**
+ * C API function to put a character into the output buffer
+ * @param c character to put into the output buffer
+ */
+void putc(char c) {
+    __asm__ volatile("mv a1, %0" : : "r" (c));
+    __asm__ volatile("li a0, 0x42");
+    __asm__ volatile ("ecall");
+}

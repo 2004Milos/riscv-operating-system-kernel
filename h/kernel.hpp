@@ -3,10 +3,23 @@
 
 #include "../lib/hw.h"
 #include "../lib/console.h"
+#include "buffer.hpp"
+
 class Kernel {
 public:
     // entry point init
     static void init();
+
+    // Posebna, uvek-aktivna nit koja prazni buffOUT na konzolu. Blokiranje na
+    // semaforu unutar Buffer::get() sme da se desi samo u kontekstu obicne niti
+    // (ne unutar prekidne rutine), zato ovo mora biti nit, a ne deo
+    // supervisorTrapHandler-a.
+    static void outputThreadBody(void* arg);
+
+    // Da li jos ima karaktera koje output nit nije stigla da isprazni na konzolu.
+    // Koristi se da se pozivalac (npr. main()) ne vrati pre nego sto se sav
+    // ispis stvarno prenese, jer je pra_njenje buffOUT-a asinhrono (u posebnoj niti).
+    static bool outputPending() { return !buffOUT->empty(); }
 
     inline static void print_int(int xx, int base, int sgn)
     {
@@ -38,6 +51,9 @@ public:
 private:
     static void supervisorTrapHandler();
     static void supervisorTrap();
+    static void initBuffers();
+    static Buffer *buffIN;
+    static Buffer *buffOUT;
 public:
     static inline uint64 r_scause() {
         uint64 volatile x;
@@ -121,10 +137,8 @@ public:
         __asm__ volatile("csrw stval, %0" : : "r"(x));
     }
 
-    static inline void popSppSpie() { //Kada se vratiš iz trap-a, vrati se u User mode. (spp je prethodni privilegovani režim i treba ga pregaziti)
-        mc_sstatus(SSTATUS_SPP);
-        __asm__ volatile("sret"); //vrati se iz trap-a
-    }
+
+    static void popSppSpie() __attribute__((noinline)); //Kada se vratiš iz trap-a, vrati se u User mode. (spp je prethodni privilegovani režim i treba ga pregaziti)
 
     enum SstatusBits {
         SSTATUS_SIE  = (1 << 1), //čime se maskiraju spoljašnji prekidi

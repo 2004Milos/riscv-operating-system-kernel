@@ -55,14 +55,14 @@ public:
 private:
     TCB(Body body, void* arg)  :
             body(body),
-            arg(arg),
             stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
             context({(uint64) &threadWrapper,
                      stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0
                     }),
-            blocked(false),
             finished(false),
-            sleepTime(0)
+            blocked(false),
+            sleepTime(0),
+            arg(arg)
     {
         if (body != nullptr) { Scheduler::put(this); }
     }

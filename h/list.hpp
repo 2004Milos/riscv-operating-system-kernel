@@ -1,6 +1,7 @@
 #ifndef OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_LIST_HPP
 #define OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_LIST_HPP
 
+#include "memory_allocator.hpp"
 template<typename T>
 class List
 {

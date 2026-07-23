@@ -1,0 +1,155 @@
+GAS LISTING /tmp/ccWtlHL6.s 			page 1
+
+
+   1              		.file	"user_main.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	_Z8userMainv
+   9              	_Z8userMainv:
+  10              	.LFB41:
+  11              		.file 1 "src/user_main.cpp"
+   1:src/user_main.cpp **** #include "../lib/console.h"
+   2:src/user_main.cpp **** #include "../h/syscall_c.hpp"
+   3:src/user_main.cpp **** 
+   4:src/user_main.cpp **** void userMain()
+   5:src/user_main.cpp **** {
+  12              		.loc 1 5 1
+  13              		.cfi_startproc
+  14 0000 130101FF 		addi	sp,sp,-16
+  15              		.cfi_def_cfa_offset 16
+  16 0004 23341100 		sd	ra,8(sp)
+  17 0008 23308100 		sd	s0,0(sp)
+  18              		.cfi_offset 1, -8
+  19              		.cfi_offset 8, -16
+  20 000c 13040101 		addi	s0,sp,16
+  21              		.cfi_def_cfa 8, 0
+   6:src/user_main.cpp ****     putc('H');
+  22              		.loc 1 6 5
+  23              		.loc 1 6 9 is_stmt 0
+  24 0010 13058004 		li	a0,72
+  25 0014 97000000 		call	_Z4putcc@plt
+  25      E7800000 
+  26              	.LVL0:
+   7:src/user_main.cpp ****     putc('e');
+  27              		.loc 1 7 5 is_stmt 1
+  28              		.loc 1 7 9 is_stmt 0
+  29 001c 13055006 		li	a0,101
+  30 0020 97000000 		call	_Z4putcc@plt
+  30      E7800000 
+  31              	.LVL1:
+   8:src/user_main.cpp ****     putc('l');
+  32              		.loc 1 8 5 is_stmt 1
+  33              		.loc 1 8 9 is_stmt 0
+  34 0028 1305C006 		li	a0,108
+  35 002c 97000000 		call	_Z4putcc@plt
+  35      E7800000 
+  36              	.LVL2:
+   9:src/user_main.cpp ****     putc('l');
+  37              		.loc 1 9 5 is_stmt 1
+  38              		.loc 1 9 9 is_stmt 0
+  39 0034 1305C006 		li	a0,108
+  40 0038 97000000 		call	_Z4putcc@plt
+  40      E7800000 
+  41              	.LVL3:
+  10:src/user_main.cpp ****     putc('o'); 
+  42              		.loc 1 10 5 is_stmt 1
+  43              		.loc 1 10 9 is_stmt 0
+  44 0040 1305F006 		li	a0,111
+GAS LISTING /tmp/ccWtlHL6.s 			page 2
+
+
+  45 0044 97000000 		call	_Z4putcc@plt
+  45      E7800000 
+  46              	.LVL4:
+  11:src/user_main.cpp **** }
+  47              		.loc 1 11 1
+  48 004c 83308100 		ld	ra,8(sp)
+  49              		.cfi_restore 1
+  50 0050 03340100 		ld	s0,0(sp)
+  51              		.cfi_restore 8
+  52              		.cfi_def_cfa 2, 16
+  53 0054 13010101 		addi	sp,sp,16
+  54              		.cfi_def_cfa_offset 0
+  55 0058 67800000 		jr	ra
+  56              		.cfi_endproc
+  57              	.LFE41:
+  59              	.Letext0:
+  60              		.file 2 "src/../h/../lib/hw.h"
+  61              		.file 3 "src/../h/syscall_c.hpp"
+GAS LISTING /tmp/ccWtlHL6.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 user_main.cpp
+     /tmp/ccWtlHL6.s:9      .text:0000000000000000 _Z8userMainv
+     /tmp/ccWtlHL6.s:13     .text:0000000000000000 .L0 
+     /tmp/ccWtlHL6.s:14     .text:0000000000000000 .L0 
+     /tmp/ccWtlHL6.s:15     .text:0000000000000004 .L0 
+     /tmp/ccWtlHL6.s:18     .text:000000000000000c .L0 
+     /tmp/ccWtlHL6.s:19     .text:000000000000000c .L0 
+     /tmp/ccWtlHL6.s:21     .text:0000000000000010 .L0 
+     /tmp/ccWtlHL6.s:23     .text:0000000000000010 .L0 
+     /tmp/ccWtlHL6.s:24     .text:0000000000000010 .L0 
+     /tmp/ccWtlHL6.s:28     .text:000000000000001c .L0 
+     /tmp/ccWtlHL6.s:29     .text:000000000000001c .L0 
+     /tmp/ccWtlHL6.s:33     .text:0000000000000028 .L0 
+     /tmp/ccWtlHL6.s:34     .text:0000000000000028 .L0 
+     /tmp/ccWtlHL6.s:38     .text:0000000000000034 .L0 
+     /tmp/ccWtlHL6.s:39     .text:0000000000000034 .L0 
+     /tmp/ccWtlHL6.s:43     .text:0000000000000040 .L0 
+     /tmp/ccWtlHL6.s:44     .text:0000000000000040 .L0 
+     /tmp/ccWtlHL6.s:48     .text:000000000000004c .L0 
+     /tmp/ccWtlHL6.s:49     .text:0000000000000050 .L0 
+     /tmp/ccWtlHL6.s:51     .text:0000000000000054 .L0 
+     /tmp/ccWtlHL6.s:52     .text:0000000000000054 .L0 
+     /tmp/ccWtlHL6.s:54     .text:0000000000000058 .L0 
+     /tmp/ccWtlHL6.s:56     .text:000000000000005c .L0 
+     /tmp/ccWtlHL6.s:62     .text:000000000000005c .L0 
+     /tmp/ccWtlHL6.s:282    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccWtlHL6.s:555    .debug_str:00000000000000e7 .LASF20
+     /tmp/ccWtlHL6.s:535    .debug_str:0000000000000055 .LASF21
+     /tmp/ccWtlHL6.s:561    .debug_str:00000000000001cb .LASF22
+     /tmp/ccWtlHL6.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccWtlHL6.s:59     .text:000000000000005c .Letext0
+     /tmp/ccWtlHL6.s:521    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccWtlHL6.s:575    .debug_str:0000000000000231 .LASF0
+     /tmp/ccWtlHL6.s:523    .debug_str:0000000000000000 .LASF1
+     /tmp/ccWtlHL6.s:549    .debug_str:00000000000000ba .LASF2
+     /tmp/ccWtlHL6.s:541    .debug_str:000000000000008c .LASF4
+     /tmp/ccWtlHL6.s:537    .debug_str:0000000000000067 .LASF3
+     /tmp/ccWtlHL6.s:525    .debug_str:0000000000000013 .LASF5
+     /tmp/ccWtlHL6.s:539    .debug_str:0000000000000079 .LASF6
+     /tmp/ccWtlHL6.s:559    .debug_str:00000000000001b8 .LASF7
+     /tmp/ccWtlHL6.s:573    .debug_str:0000000000000221 .LASF8
+     /tmp/ccWtlHL6.s:527    .debug_str:000000000000001a .LASF9
+     /tmp/ccWtlHL6.s:529    .debug_str:0000000000000028 .LASF10
+     /tmp/ccWtlHL6.s:565    .debug_str:00000000000001f7 .LASF11
+     /tmp/ccWtlHL6.s:533    .debug_str:0000000000000045 .LASF12
+     /tmp/ccWtlHL6.s:563    .debug_str:00000000000001e7 .LASF13
+     /tmp/ccWtlHL6.s:547    .debug_str:00000000000000ae .LASF14
+     /tmp/ccWtlHL6.s:545    .debug_str:0000000000000098 .LASF15
+     /tmp/ccWtlHL6.s:551    .debug_str:00000000000000c8 .LASF16
+     /tmp/ccWtlHL6.s:543    .debug_str:0000000000000093 .LASF17
+     /tmp/ccWtlHL6.s:531    .debug_str:0000000000000037 .LASF18
+     /tmp/ccWtlHL6.s:567    .debug_str:0000000000000206 .LASF19
+     /tmp/ccWtlHL6.s:553    .debug_str:00000000000000de .LASF23
+     /tmp/ccWtlHL6.s:557    .debug_str:00000000000001ab .LASF24
+     /tmp/ccWtlHL6.s:10     .text:0000000000000000 .LFB41
+     /tmp/ccWtlHL6.s:57     .text:000000000000005c .LFE41
+GAS LISTING /tmp/ccWtlHL6.s 			page 4
+
+
+     /tmp/ccWtlHL6.s:26     .text:000000000000001c .LVL0
+     /tmp/ccWtlHL6.s:31     .text:0000000000000028 .LVL1
+     /tmp/ccWtlHL6.s:36     .text:0000000000000034 .LVL2
+     /tmp/ccWtlHL6.s:41     .text:0000000000000040 .LVL3
+     /tmp/ccWtlHL6.s:46     .text:000000000000004c .LVL4
+     /tmp/ccWtlHL6.s:569    .debug_str:0000000000000213 .LASF25
+     /tmp/ccWtlHL6.s:571    .debug_str:000000000000021c .LASF26
+     /tmp/ccWtlHL6.s:63     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_Z4putcc

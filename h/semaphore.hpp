@@ -42,7 +42,7 @@ private:
     };
 
     bool closed;
-    int value;
+    unsigned value;
     List<BlockedThreadInfo> blocked;
 };
 

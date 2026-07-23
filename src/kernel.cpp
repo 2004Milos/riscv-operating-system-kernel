@@ -3,21 +3,67 @@
 #include "../lib/console.h"
 #include "../h/tcb.hpp"
 #include "../h/semaphore.hpp"
+#include "../h/buffer.hpp"
+#include "../h/syscall_c.hpp"
+#include "../lib/hw.h"
 
 void Kernel::init() {
+    initBuffers();
     // set trap routine
     w_stvec((uint64)&supervisorTrap);
     //ms_sstatus(SstatusBits::SSTATUS_SIE);
+
+    // Nit koja jedina prazni buffOUT na konzolu (mora biti nit, ne kod u
+    // prekidnoj rutini, jer Buffer::get() blokira na semaforu kad je prazan).
+    TCB::createThread(outputThreadBody, nullptr);
+}
+
+void Kernel::outputThreadBody(void*) {
+    while (true) {
+        while (*((volatile char*) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) {
+            char c = buffOUT->get(); //blokira (preko semafora) dok ima nesto za slanje - bezbedno ovde, ovo je obicna nit, ne prekidna rutina
+            (*(char *) CONSOLE_TX_DATA) = c;
+        }
+        thread_dispatch(); //ako konzola trenutno nije spremna za prijem, ustupi procesor umesto da se vrti u mestu
+    }
+}
+
+void Kernel::popSppSpie() {
+    mc_sstatus(SSTATUS_SPP);
+    __asm__ volatile("csrw sepc, ra"); //sepc = adresa odmah iza poziva ove funkcije (ra), da bi sret "nastavio" tacno tu, samo u User modu
+    __asm__ volatile("sret"); //vrati se iz trap-a
+}
+
+Buffer *Kernel::buffIN;
+Buffer *Kernel::buffOUT;
+
+void Kernel::initBuffers() {
+    buffIN = new Buffer(512);
+    buffOUT = new Buffer(512);
 }
 
 using Body = void (*)(void*);
 
 void Kernel::supervisorTrapHandler()
 {
-    uint32 scause = r_scause();
+    uint64 scause = r_scause();
     if(scause == 0x8000000000000001UL) {//timer interrupt can be recognized by the value 1 only in the least and most significant bits in the scause register.
         mc_sip(BitMaskSip::SIP_SSIP); //clear the timer interrupt pending bit in the sip register
         TCB::time_tick();
+    }
+    else if(scause == 0x8000000000000009UL){ //Hardware interrupt
+        int irq = plic_claim();
+        if (irq == 10) // Keyboard interrupt
+        {
+            volatile char status = *((char *) CONSOLE_STATUS);
+            while (status & CONSOLE_RX_STATUS_BIT) { //receive data dok god ima novopristiglih znakova
+                char c = (*(char *) CONSOLE_RX_DATA);
+                if (!buffIN->full()) buffIN->put(c);
+                if (!buffOUT->full()) buffOUT->put(c); //eho na konzolu
+                status = *((char *) CONSOLE_STATUS);
+            }
+        }
+        plic_complete(irq);
     }
     else if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL)
     {
@@ -151,6 +197,16 @@ void Kernel::supervisorTrapHandler()
                 returnValue = TCB::time_sleep(value);
                 __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
                 __asm__ volatile ("sw t0, 80(x8)");
+                break;
+            case 0x41: // getc
+                returnValue = buffIN->get();
+                __asm__ volatile ("mv t0, %0" : : "r"(returnValue));
+                __asm__ volatile ("sw t0, 80(x8)");
+                break;
+            case 0x42: // putc
+                char c;
+                __asm__ volatile ("mv %0, a1" : "=r" (c));
+                buffOUT->put(c);
                 break;
             default:
                 break;

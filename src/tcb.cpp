@@ -4,12 +4,16 @@
 
 TCB *TCB::running = nullptr;
 
+List<TCB> TCB::SleepingThreads;
+
 uint64 TCB::timeSliceCounter = 0;
 
 TCB *TCB::createThread(Body body, void* arg)
 {
     TCB* newTCB = new TCB(body, arg);
-    Scheduler::put(newTCB);
+    // Konstruktor vec stavlja newTCB u red (samo ako body != nullptr - "glavna"
+    // nit sa body == nullptr namerno se ne stavlja u red ovde, vec tek kad
+    // TCB::dispatch() prvi put odluci da je preotme).
     return newTCB;
 }
 
@@ -69,10 +73,11 @@ int TCB::time_sleep(time_t timeout) {
 
     return 0;
 }
+
 //static
 void TCB::time_tick(){
 
-    for(int i = 0; i < SleepingThreads.getSize(); i++) {
+    for(size_t i = 0; i < SleepingThreads.getSize(); i++) {
         TCB* t = SleepingThreads.removeFirst();
         t->decSleep();
 
