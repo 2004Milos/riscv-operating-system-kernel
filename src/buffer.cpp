@@ -1,6 +1,6 @@
 #include "../h/buffer.hpp"
 
-Buffer::Buffer(int cap)
+KBuffer::KBuffer(int cap)
 {
     this->cap = cap;
     head=tail=0;
@@ -10,7 +10,7 @@ Buffer::Buffer(int cap)
     spaceAvailable = new KSemaphore(cap);
 }
 
-void Buffer::put(char item)
+void KBuffer::put(char item)
 {
     spaceAvailable->kwait_n(1);
     buff[head]=item;
@@ -19,7 +19,7 @@ void Buffer::put(char item)
     itemAvailable->ksignal_n(1);
 }
 
-char Buffer::get()
+char KBuffer::get()
 {
     itemAvailable->kwait_n(1);
     char ret = buff[tail];
@@ -29,7 +29,7 @@ char Buffer::get()
     return ret;
 }
 
-Buffer::~Buffer()
+KBuffer::~KBuffer()
 {
     MemoryAllocator::instance().kmem_free(buff);
     delete itemAvailable;

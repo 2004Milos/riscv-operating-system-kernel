@@ -6,6 +6,7 @@
 #include "../h/buffer.hpp"
 #include "../h/syscall_c.hpp"
 #include "../lib/hw.h"
+#include "../h/printing.hpp"
 
 void Kernel::init() {
     initBuffers();
@@ -14,7 +15,7 @@ void Kernel::init() {
     //ms_sstatus(SstatusBits::SSTATUS_SIE);
 
     // Nit koja jedina prazni buffOUT na konzolu (mora biti nit, ne kod u
-    // prekidnoj rutini, jer Buffer::get() blokira na semaforu kad je prazan).
+    // prekidnoj rutini, jer KBuffer::get() blokira na semaforu kad je prazan).
     TCB::createThread(outputThreadBody, nullptr, new uint64[TCB::STACK_SIZE]);
 }
 
@@ -34,12 +35,12 @@ void Kernel::popSppSpie() {
     __asm__ volatile("sret"); //vrati se iz trap-a
 }
 
-Buffer *Kernel::buffIN;
-Buffer *Kernel::buffOUT;
+KBuffer *Kernel::buffIN;
+KBuffer *Kernel::buffOUT;
 
 void Kernel::initBuffers() {
-    buffIN = new Buffer(512);
-    buffOUT = new Buffer(512);
+    buffIN = new KBuffer(512);
+    buffOUT = new KBuffer(512);
 }
 
 using Body = void (*)(void*);
@@ -228,6 +229,35 @@ void Kernel::supervisorTrapHandler()
         w_sstatus(sstatus);
         w_sepc(sepc);
     }
-    
+    else {
+        uint64 scause = r_scause();
+        uint64 stval = r_stval();
+        uint64 stvec = r_stvec();
+        uint64 sepc = r_sepc();
+
+        kprintString("scause: ");
+        kprintInt(scause);
+        kprintString("\n");
+
+        kprintString("stval: ");
+        kprintInt(stval);
+        kprintString("\n");
+
+        kprintString("stvec: ");
+        kprintInt(stvec);
+        kprintString("\n");
+
+        kprintString("sepc: ");
+        kprintInt(sepc);
+        kprintString("\n");
+
+        kprintString("Exception\n");
+
+        // Ne vracamo se na sepc (instrukcija koja je izazvala trap), jer bi se
+        // trap ponovo desio u beskonacnost. Umesto toga, nit koja je izazvala
+        // trap se prekida (isto kao kod thread_exit-a) i prelazi se na drugu.
+        TCB::running->setFinished(true);
+        TCB::dispatch();
+    }
     return;
 }

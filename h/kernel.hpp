@@ -11,7 +11,7 @@ public:
     static void init();
 
     // Posebna, uvek-aktivna nit koja prazni buffOUT na konzolu. Blokiranje na
-    // semaforu unutar Buffer::get() sme da se desi samo u kontekstu obicne niti
+    // semaforu unutar KBuffer::get() sme da se desi samo u kontekstu obicne niti
     // (ne unutar prekidne rutine), zato ovo mora biti nit, a ne deo
     // supervisorTrapHandler-a.
     static void outputThreadBody(void* arg);
@@ -25,8 +25,8 @@ private:
     static void supervisorTrapHandler();
     static void supervisorTrap();
     static void initBuffers();
-    static Buffer *buffIN;
-    static Buffer *buffOUT;
+    static KBuffer *buffIN;
+    static KBuffer *buffOUT;
 public:
     static inline uint64 r_scause() {
         uint64 volatile x;

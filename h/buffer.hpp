@@ -8,13 +8,13 @@
 #include "semaphore.hpp"
 
 
-class Buffer
+class KBuffer
 {
 public:
         void put(char item);
         char get();
-        Buffer(int cap);
-        ~Buffer();
+        KBuffer(int cap);
+        ~KBuffer();
         void* operator new(size_t size)
         {
             return MemoryAllocator::instance().kmem_alloc(size);

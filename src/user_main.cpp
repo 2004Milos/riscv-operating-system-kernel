@@ -1,4 +1,4 @@
-#include "../h/syscall_cpp.hpp"
+/*#include "../h/syscall_cpp.hpp"
 sem_t sem;
 void function(void* arg) {
     for (int i = 0; i < 5; i++) {
@@ -33,3 +33,4 @@ void userMain()
     sem_wait_n(sem, 10);
     pt->terminate();
 }
+*/
