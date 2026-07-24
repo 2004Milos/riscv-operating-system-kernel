@@ -6,8 +6,8 @@ Buffer::Buffer(int cap)
     head=tail=0;
     cnt=0;
     buff = (char*) MemoryAllocator::instance().kmem_alloc(cap*sizeof(char));
-    itemAvailable = new Semaphore(0);
-    spaceAvailable = new Semaphore(cap);
+    itemAvailable = new KSemaphore(0);
+    spaceAvailable = new KSemaphore(cap);
 }
 
 void Buffer::put(char item)

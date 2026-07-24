@@ -2,7 +2,7 @@
 #include "../h/syscall_c.hpp"
 #include "../h/list.hpp"
 
-int Semaphore::kwait_n(unsigned n) { //lock/unlock unnecesary because with ecall we blocked interrupts
+int KSemaphore::kwait_n(unsigned n) { //lock/unlock unnecesary because with ecall we blocked interrupts
     if (closed) {
         return -1;
     }
@@ -26,7 +26,7 @@ int Semaphore::kwait_n(unsigned n) { //lock/unlock unnecesary because with ecall
     return 0;
 }
 
-int Semaphore::ksignal_n(unsigned n) {
+int KSemaphore::ksignal_n(unsigned n) {
     if(this->closed) {
         return -1;
     }
@@ -52,11 +52,11 @@ int Semaphore::ksignal_n(unsigned n) {
     return 0;
 }
 
-Semaphore *Semaphore::createSemaphore(unsigned int init) {
-    return new Semaphore(init);
+KSemaphore *KSemaphore::createSemaphore(unsigned int init) {
+    return new KSemaphore(init);
 }
 
-int Semaphore::close() {
+int KSemaphore::close() {
     if (closed) {
         return -1;
     }

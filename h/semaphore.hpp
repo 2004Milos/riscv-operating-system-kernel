@@ -5,16 +5,16 @@
 #include "tcb.hpp"
 #include "memory_allocator.hpp"
 
-class Semaphore {
+class KSemaphore {
 public:
-    explicit Semaphore(unsigned init = 1) {
+    explicit KSemaphore(unsigned init = 1) {
         this->value = init;
         this->closed = false;
     }
 
     int kwait_n(unsigned n);
     int ksignal_n(unsigned n);
-    static Semaphore* createSemaphore(unsigned init = 1);
+    static KSemaphore* createSemaphore(unsigned init = 1);
     unsigned getValue() const { return value; }
     int close();
 
@@ -38,7 +38,7 @@ private:
         unsigned requested; //number of resources requested by the blocked thread (1 for wait, n for wait_n)
 
         BlockedThreadInfo(TCB* thread, unsigned requested) : thread(thread), requested(requested) {}
-        friend class Semaphore;
+        friend class KSemaphore;
     };
 
     bool closed;

@@ -126,9 +126,9 @@ int sem_wait(sem_t id) {
  * @param n number of resources to wait for
  * @return negative error code or 0 for success
  */
-int sem_wait_n(sem_t id, unsigned n) {
-    __asm__ volatile ("mv a1, %0" : : "r" (id));
+int sem_wait_n(sem_t id, unsigned n) { //bitan je redosled jer n stize u a1 a id u a0, i drugi redosled bi pregazio 
     __asm__ volatile ("mv a2, %0" : : "r" (n));
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
     __asm__ volatile("li a0, 0x25");
     __asm__ volatile ("ecall");
 
@@ -159,8 +159,8 @@ int sem_signal(sem_t id) {
  * @return negative error code or 0 for success
  */
 int sem_signal_n(sem_t id, unsigned n) {
-    __asm__ volatile ("mv a1, %0" : : "r" (id));
     __asm__ volatile ("mv a2, %0" : : "r" (n));
+    __asm__ volatile ("mv a1, %0" : : "r" (id));
     __asm__ volatile("li a0, 0x26");
     __asm__ volatile ("ecall");
 

@@ -74,7 +74,7 @@ void Kernel::supervisorTrapHandler()
         uint64 volatile sstatus =  r_sstatus();
         
         uint64 volatile opcode = r_a0();
-        Semaphore* semHandlePtr;
+        KSemaphore* semHandlePtr;
         int returnValue;
         
         int value;
@@ -128,11 +128,11 @@ void Kernel::supervisorTrapHandler()
                 break;
             case 0x21: //sem_open
                 unsigned init;
-                Semaphore** semHandle;
+                KSemaphore** semHandle;
 
                 __asm__ volatile ("mv %0, a2" : "=r" (init)); //initial value of semaphore
                 __asm__ volatile ("mv %0, a1" : "=r" (semHandle));
-                *semHandle = Semaphore::createSemaphore(init);
+                *semHandle = KSemaphore::createSemaphore(init);
 
                 if(*semHandle != nullptr) {
                     __asm__ volatile ("li t0, 0"); //load immediate 0 into t0 (success)

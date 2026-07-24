@@ -29,8 +29,8 @@ public:
         int count() const {return cnt;}
 private:
     int cap;
-    Semaphore* itemAvailable;
-    Semaphore* spaceAvailable;
+    KSemaphore* itemAvailable;
+    KSemaphore* spaceAvailable;
     int head;
     int tail;
     char* buff;

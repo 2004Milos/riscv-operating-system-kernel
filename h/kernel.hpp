@@ -21,33 +21,6 @@ public:
     // ispis stvarno prenese, jer je pra_njenje buffOUT-a asinhrono (u posebnoj niti).
     static bool outputPending() { return !buffOUT->empty(); }
 
-    inline static void print_int(int xx, int base, int sgn)
-    {
-        char my_digits[] = "0123456789ABCDEF";
-        char buf[16];
-        int i, neg;
-        uint x;
-
-        neg = 0;
-        if(sgn && xx < 0){
-            neg = 1;
-            x = -xx;
-        } else {
-            x = xx;
-        }
-
-        i = 0;
-        do{
-            buf[i++] = my_digits[x % base];
-        }while((x /= base) != 0);
-        if(neg)
-            buf[i++] = '-';
-
-        while(--i >= 0)
-            __putc(buf[i]);
-
-    }
-
 private:
     static void supervisorTrapHandler();
     static void supervisorTrap();
