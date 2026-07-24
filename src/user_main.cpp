@@ -31,4 +31,5 @@ void userMain()
     MyPeriodicThread* pt = new MyPeriodicThread(10);
     pt->start();
     sem_wait_n(sem, 10);
+    pt->terminate();
 }

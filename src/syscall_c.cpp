@@ -40,8 +40,9 @@ int mem_free (void* ptr) {
  * @return negative error code or 0 for successfull free
  */
 int thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) {
-
+    uint64* stack = (uint64*) mem_alloc(DEFAULT_STACK_SIZE * sizeof(uint64));
     __asm__ volatile("mv a7, %0" : : "r"(arg));
+    __asm__ volatile("mv a3, %0" : : "r"(stack));
     __asm__ volatile("mv a2, %0" : : "r"(start_routine));
     __asm__ volatile("mv a1, %0" : : "r"(handle));
     __asm__ volatile("li a0, 0x11");

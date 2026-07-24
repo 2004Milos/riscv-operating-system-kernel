@@ -8,9 +8,9 @@ List<TCB> TCB::SleepingThreads;
 
 uint64 TCB::timeSliceCounter = 0;
 
-TCB *TCB::createThread(Body body, void* arg)
+TCB *TCB::createThread(Body body, void* arg, uint64 *stack)
 {
-    TCB* newTCB = new TCB(body, arg);
+    TCB* newTCB = new TCB(body, arg, stack);
     // Konstruktor vec stavlja newTCB u red (samo ako body != nullptr - "glavna"
     // nit sa body == nullptr namerno se ne stavlja u red ovde, vec tek kad
     // TCB::dispatch() prvi put odluci da je preotme).
@@ -30,7 +30,7 @@ void TCB::dispatch()
         Scheduler::put(old);
     }
     running = Scheduler::get();
-    
+    timeSliceCounter = 0; // reset time slice counter for the new running thread
     TCB::contextSwitch(&old->context, &running->context);
 }
 

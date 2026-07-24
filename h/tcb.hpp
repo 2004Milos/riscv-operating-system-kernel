@@ -3,12 +3,13 @@
 
 #include "../lib/hw.h"
 #include "scheduler.hpp"
+#include "memory_allocator.hpp"
 
 // Thread Control Block
 class TCB
 {
 public:
-    ~TCB() { delete[] stack; }
+    ~TCB() { MemoryAllocator::instance().kmem_free(stack); }
 
     bool isFinished() const { return finished; }
 
@@ -26,7 +27,7 @@ public:
 
     using Body = void (*)(void*); //Body = pointer to function that takes a void pointer as an argument and returns void
 
-    static TCB *createThread(Body body, void* arg);
+    static TCB *createThread(Body body, void* arg, uint64 *stack);
 
     static void yield();
 
@@ -37,6 +38,8 @@ public:
     static TCB *running;
 
     static List<TCB> SleepingThreads;
+
+    uint64 getTimeSlice() const { return timeSlice; }
 
     void* operator new(size_t size) {
         return MemoryAllocator::instance().kmem_alloc(size);
@@ -53,16 +56,17 @@ public:
     }
 
 private:
-    TCB(Body body, void* arg)  :
+    TCB(Body body, void* arg, uint64 *stack) :
             body(body),
-            stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
+            stack(stack),
             context({(uint64) &threadWrapper,
                      stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0
                     }),
             finished(false),
             blocked(false),
             sleepTime(0),
-            arg(arg)
+            arg(arg),
+            timeSlice(DEFAULT_TIME_SLICE)
     {
         if (body != nullptr) { Scheduler::put(this); }
     }
@@ -81,6 +85,7 @@ private:
     time_t sleepTime;
     void* arg;
     List<TCB> joined;
+    uint64 timeSlice;
 
     friend class Kernel;
 
@@ -95,8 +100,8 @@ private:
 
     static uint64 timeSliceCounter;
 
-    static uint64 constexpr STACK_SIZE = 1024;
-    static uint64 constexpr TIME_SLICE = 2;
+    static uint64 constexpr STACK_SIZE = DEFAULT_STACK_SIZE;
+    static uint64 constexpr TIME_SLICE = DEFAULT_TIME_SLICE;
 };
 
 #endif //OS1_VEZBE07_RISCV_CONTEXT_SWITCH_2_INTERRUPT_TCB_HPP

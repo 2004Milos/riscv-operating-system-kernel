@@ -10,12 +10,13 @@ void main()
 {
 
     Kernel::init();
-    Kernel::ms_sstatus(Kernel::SSTATUS_SIE);
 
     TCB *threads[5];
 
-    threads[0] = TCB::createThread(nullptr,nullptr);
+    threads[0] = TCB::createThread(nullptr,nullptr, new uint64[DEFAULT_STACK_SIZE]); //main thread
     TCB::running = threads[0];
+
+    Kernel::ms_sstatus(Kernel::SSTATUS_SIE); 
 
     thread_create(&threads[1], reinterpret_cast<void (*)(void *)>(userMain), nullptr);
 

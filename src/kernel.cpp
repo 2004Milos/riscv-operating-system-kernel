@@ -15,7 +15,7 @@ void Kernel::init() {
 
     // Nit koja jedina prazni buffOUT na konzolu (mora biti nit, ne kod u
     // prekidnoj rutini, jer Buffer::get() blokira na semaforu kad je prazan).
-    TCB::createThread(outputThreadBody, nullptr);
+    TCB::createThread(outputThreadBody, nullptr, new uint64[TCB::STACK_SIZE]);
 }
 
 void Kernel::outputThreadBody(void*) {
@@ -49,7 +49,18 @@ void Kernel::supervisorTrapHandler()
     uint64 scause = r_scause();
     if(scause == 0x8000000000000001UL) {//timer interrupt can be recognized by the value 1 only in the least and most significant bits in the scause register.
         mc_sip(BitMaskSip::SIP_SSIP); //clear the timer interrupt pending bit in the sip register
-        TCB::time_tick();
+        TCB::time_tick(); // increases time for sleeping threads.
+
+        TCB::timeSliceCounter++;
+        if (TCB::timeSliceCounter >= TCB::running->getTimeSlice()) {
+            uint64 volatile sepc = r_sepc();
+            uint64 volatile sstatus = r_sstatus();
+
+            TCB::dispatch();
+
+            w_sstatus(sstatus);
+            w_sepc(sepc);
+        }
     }
     else if(scause == 0x8000000000000009UL){ //Hardware interrupt
         int irq = plic_claim();
@@ -102,10 +113,13 @@ void Kernel::supervisorTrapHandler()
                 TCB** tcb; //handle is pointer to TCB, so we need pointer to pointer to TCB to write the address of new TCB into it
                 Body body; // pointer to function that takes a void pointer as an argument and returns void
                 void* arg;
+                uint64* stack;
                 __asm__ volatile ("mv %0, a1" : "=r" (tcb));
                 __asm__ volatile ("mv %0, a2" : "=r" (body));
+                __asm__ volatile ("mv %0, a3" : "=r" (stack));
                 __asm__ volatile ("mv %0, a7" : "=r" (arg));
-                *tcb = TCB::createThread(body, arg);
+                
+                *tcb = TCB::createThread(body, arg, stack);
                 if(*tcb != nullptr) {
                     //__asm__ volatile ("li a0, 0");
                     __asm__ volatile ("li t0, 0"); //load immediate 0 into t0 (success)
@@ -211,7 +225,6 @@ void Kernel::supervisorTrapHandler()
             default:
                 break;
         }
-
         w_sstatus(sstatus);
         w_sepc(sepc);
     }

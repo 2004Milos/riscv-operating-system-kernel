@@ -36,6 +36,19 @@ private:
     class BlockedThreadInfo {
         TCB* thread; //pointer to blocked thread
         unsigned requested; //number of resources requested by the blocked thread (1 for wait, n for wait_n)
+        void* operator new(size_t size) {
+            return MemoryAllocator::instance().kmem_alloc(size);
+        }
+        void* operator new[](size_t size) {
+            return MemoryAllocator::instance().kmem_alloc(size);
+        }
+        
+        void operator delete(void *ptr) {
+            MemoryAllocator::instance().kmem_free(ptr);
+        }
+        void operator delete[](void *ptr) {
+            MemoryAllocator::instance().kmem_free(ptr);
+        }
 
         BlockedThreadInfo(TCB* thread, unsigned requested) : thread(thread), requested(requested) {}
         friend class KSemaphore;
